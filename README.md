@@ -2,7 +2,7 @@
 Program right now:<br/>
 reads in csv data from structure101<br/>
 creates a *tinkerpop.gremlin.structure.Graph* from the graphml data from arcan<br/>
-compares the csv data from structure101 to the data in graphml from arcan and outputs the accuracy per package and the total accuracy<br/>
+compares the csv data from structure101 to the data in graphml from arcan and outputs the accuracy per package and the total accuracy. It right now only compares package depenendencies and not any class dependencies.<br/>
 <br/>
 summarized data:<br/>
 total right: 178 total compared: 385
