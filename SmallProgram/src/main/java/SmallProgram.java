@@ -57,19 +57,22 @@ public class SmallProgram {
             int total = 0;
             int right = 0;
             for(int j = 0; j < csventries[i].getDependencies().length; ++j){
-                int n = csventries[i].getDependencies()[j];
+                int n = csventries[i].getDependenciesIdx(j);
                 if(n > 0 ){
+                    System.out.println("+---------------------");
                     String target = csventries[j].getPackageName().substring(5);
-                    boolean isEqual = GraphmlReader.graphIsDependentOn(g, source, target);
+                    System.out.println("i: " + i + " j: " + j + " source: " + source + " target: " + target);
+                    //System.out.println("-\n" + GraphmlReader.checkClassDependencies(g, source, target) + "-\n");
+                    boolean isEqual = GraphmlReader.graphIsDependentOn(g, source, target) || GraphmlReader.checkClassDependencies(g, source, target);
                     total++;
                     if(isEqual) right++;
-                    System.out.println(isEqual + " source: " + source + " target: " + target);
+                    System.out.println("---------------------");
                 }
             }
             totalSum += total;
             totalRight += right;
             accuracy = (double) right / total;
-            System.out.println("accuracy: " + accuracy + "total: " + total + " right: " + right + " source: " + source);
+            //System.out.println("accuracy: " + accuracy + "total: " + total + " right: " + right + " source: " + source);
         }
         System.out.println("totalRight: " + totalRight + " totalSum: " + totalSum);
     }
