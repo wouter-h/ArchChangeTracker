@@ -60,7 +60,7 @@ public class GraphmlReader {
     }
 
     public static boolean checkClassDependencies(Graph g, String source, String target) {
-        System.out.println("source in checkClassDpendencies: " + source + " target: " + target);
+        //System.out.println("source in checkClassDpendencies: " + source + " target: " + target);
         //GraphTraversal<Vertex, Object> gtve = g.traversal().V().as("x").out("belongsTo").has("name", source).select("x");
         //System.out.println(gtve.toString());
         //System.out.println(gtve.next().toString());
@@ -72,7 +72,7 @@ public class GraphmlReader {
                 as("a").out("belongsTo").has("name", source),
                 as("a").out("isAfferentOf").has("name", target)
         ).hasNext()){
-            System.out.println("\n\n\n returned true!\n\n\n");
+            //System.out.println("\n\n\n returned true!\n\n\n");
             return true;
         } else if(g.traversal().V().match(
                 as("a").out("belongsTo").has("name", source),

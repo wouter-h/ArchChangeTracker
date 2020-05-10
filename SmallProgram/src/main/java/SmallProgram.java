@@ -1,3 +1,6 @@
+import DataStorage.CommitDependencies;
+import Analyzer.DifferenceAnalyzer;
+import DataStorage.DifferenceInfo;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 
 import java.io.*;
@@ -26,7 +29,7 @@ public class SmallProgram {
 
             for(int i = 0; i < 45; ++i){
                 for(int j = 0; j < 47; ++j){
-                    System.out.println("i: " + i + " j: " + j + " arraybufferListSize: " + arrayBufferList.size() + " arraybufferList.get().size(): " + arrayBufferList.get(i).length);
+                    //System.out.println("i: " + i + " j: " + j + " arraybufferListSize: " + arrayBufferList.size() + " arraybufferList.get().size(): " + arrayBufferList.get(i).length);
                     if(j == 0){
 
                     } else if (j == 1) {
@@ -40,8 +43,8 @@ public class SmallProgram {
                     }
                 }
             }
-            System.out.println(csventries[44].getPackageName() + csventries[44].getDependenciesIdx(38));
-            System.out.println(csventries[42].getPackageName() + csventries[42].getDependenciesIdx(44));
+            //System.out.println(csventries[44].getPackageName() + csventries[44].getDependenciesIdx(38));
+            //System.out.println(csventries[42].getPackageName() + csventries[42].getDependenciesIdx(44));
         } catch (IOException e){
             System.err.format("IOException: %s%n", e);
         }
@@ -51,36 +54,51 @@ public class SmallProgram {
     public static void compareCSVtoGraphml(Csvobject[] csventries, Graph g){
         int totalSum = 0;
         int totalRight = 0;
-        for(int i = 0; i < csventries.length; ++i){
-            String source = csventries[i].getPackageName().substring(5);
+        for(int j = 40; j == 40 /*csventries.length*/; ++j){
+            String target = csventries[j].getPackageName().substring(5);
             double accuracy = 0;
             int total = 0;
             int right = 0;
-            for(int j = 0; j < csventries[i].getDependencies().length; ++j){
+            for(int i = 0; i < 45/*csventries[i].getDependencies().length*/; ++i){
                 int n = csventries[i].getDependenciesIdx(j);
                 if(n > 0 ){
-                    System.out.println("+---------------------");
-                    String target = csventries[j].getPackageName().substring(5);
-                    System.out.println("i: " + i + " j: " + j + " source: " + source + " target: " + target);
+                    //System.out.println("+---------------------");
+                    String source = csventries[i].getPackageName().substring(5);
+                    //System.out.println("i: " + i + " j: " + j + " source: " + source + " target: " + target);
                     //System.out.println("-\n" + GraphmlReader.checkClassDependencies(g, source, target) + "-\n");
                     boolean isEqual = GraphmlReader.graphIsDependentOn(g, source, target) || GraphmlReader.checkClassDependencies(g, source, target);
                     total++;
                     if(isEqual) right++;
-                    System.out.println("---------------------");
+                    if(!isEqual){
+                        System.out.println("+---------------------");
+                        System.out.println("i: " + i + " j: " + j + " source: " + source + " target: " + target);
+                        System.out.println("Detected: " + isEqual);
+                        System.out.println("---------------------");
+                    }
                 }
             }
+            System.out.println("j: " + j + " " + right + "/" + total + " target: " + target);
             totalSum += total;
             totalRight += right;
             accuracy = (double) right / total;
-            //System.out.println("accuracy: " + accuracy + "total: " + total + " right: " + right + " source: " + source);
         }
         System.out.println("totalRight: " + totalRight + " totalSum: " + totalSum);
     }
 
+
+    public static void analyzeGraphs(String graphml1, String graphml2){
+        CommitDependencies cd1 = Analyzer.getAllDependencies(GraphmlReader.getGraph(Paths.get(graphml1)));
+        CommitDependencies cd2 = Analyzer.getAllDependencies(GraphmlReader.getGraph(Paths.get(graphml2)));
+        DifferenceInfo di = DifferenceAnalyzer.findDifferences(cd1, cd2);
+        di.setGraphName(graphml1);
+        di.setComparedGraphName(graphml2);
+    }
+
     public static void main(String[] args){
-        Csvobject[] csventries = SmallProgram.readCSVFile("/home/muffin/Documents/Universiteit/master internship/structure101 spark dependency leaf packages.csv");
+        //Csvobject[] csventries = SmallProgram.readCSVFile("/home/muffin/Documents/Universiteit/master internship/structure101 spark dependency leaf packages.csv");
         Graph g = GraphmlReader.getGraph(Paths.get("/home/muffin/Documents/Universiteit/master internship/graph-208-12_2_2020-1e6b4e813bd73f38742595b79692b2645a2d9c4d.graphml"));
-        //System.out.print(GraphmlReader.graphIsDependentOn(g, "org.jivesoftware.spark.component.panes", "java.awt"));
-        compareCSVtoGraphml(csventries, g);
+        //compareCSVtoGraphml(csventries, g);
+        CommitDependencies cd = Analyzer.getAllDependencies(g);
+        cd.prettyPrint();
     }
 }
