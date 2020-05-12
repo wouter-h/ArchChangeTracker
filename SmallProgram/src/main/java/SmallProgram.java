@@ -1,6 +1,6 @@
-import DataStorage.CommitDependencies;
+import DataStorage.*;
 import Analyzer.DifferenceAnalyzer;
-import DataStorage.DifferenceInfo;
+import Analyzer.DifferenceAnalyzerHash;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 
 import java.io.*;
@@ -112,7 +112,10 @@ public class SmallProgram {
         //Analyzer.getAllDependencies(g2);
         cd1 = Analyzer.getAllDependencies1(g1);
         cd2 = Analyzer.getAllDependencies1(g2);
-
+        PackageLookupTable plt3 = new PackageLookupTable();
+        PackageLookupTable plt4 = new PackageLookupTable();
+        CommitDependenciesHash cd3 = Analyzer.getAllDependencies1Hash(plt3, g1);
+        CommitDependenciesHash cd4 = Analyzer.getAllDependencies1Hash(plt4, g2);
         for(int i = 0; i < 1; ++i) {
             /*timing program*/
             long startTime = System.nanoTime();
@@ -125,6 +128,17 @@ public class SmallProgram {
             totalTime += endTime - startTime;
             System.out.println("\t totalTime: " + ((double) totalTime) / 10000000);
             /*done timing program*/
+            /*start timing hash program*/
+            startTime = System.nanoTime();
+            /*done timing program*/
+            DifferenceInfoHash dih = DifferenceAnalyzerHash.findDifferences(plt4, plt3, cd4, cd3);
+            di.setGraphName("some name");
+            di.setComparedGraphName("some other name");
+            /*timing program*/
+            endTime   = System.nanoTime();
+            totalTime += endTime - startTime;
+            System.out.println("\t totalTime hash: " + ((double) totalTime) / 10000000);
+            /*done timing hash program*/
         }
         //cd1.prettyPrint();
         long programExecutionTimeEnd = System.nanoTime();

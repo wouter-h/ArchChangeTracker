@@ -35,6 +35,7 @@ public class GraphmlReader {
             }
         }
 
+
         graph.traversal().V()
                 .has("Type", TextP.containing("retrieved"))
                 .drop().iterate();

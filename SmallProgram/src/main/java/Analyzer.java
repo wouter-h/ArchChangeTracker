@@ -1,5 +1,4 @@
-import DataStorage.CommitDependencies;
-import DataStorage.PackageInfo;
+import DataStorage.*;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -168,5 +167,63 @@ public class Analyzer {
             ++i;
         }
         return -1;
+    }
+
+    public static CommitDependenciesHash getAllDependencies1Hash(PackageLookupTable plt, Graph g){
+        long startTime = System.nanoTime();
+        CommitDependenciesHash cd = retrieveAllPackageDependenciesHash(g, retrieveAllPackages(g), plt);
+        long endTime = System.nanoTime();
+        System.out.println("hash difference: " + ((double) endTime - startTime) / 10000000);
+        return cd;
+    }
+
+    public static CommitDependenciesHash retrieveAllPackageDependenciesHash(Graph g, ArrayList<Vertex> vertices, PackageLookupTable plt){
+        //package dependencies
+        GraphTraversal<Vertex, Map<String, Vertex>> gt1 = g.traversal().V(vertices).as("x").out("packageIsAfferentOf").as("y").select("x", "y");
+
+        //class dependencies
+        //Get the packages V depends on with class dependencies <> package dependency relations
+        GraphTraversal<Vertex, Map<String, Vertex>> gt2 = g.traversal().V(vertices).as("x").match(
+                as("a").in("afferentOf").as("b"),
+                as("b").out("belongsTo").hasId(select("x").id())
+        ).select("x", "a");
+        //Get the packages V depends on with class <> class dependency relations
+        GraphTraversal<Vertex, Map<String, Vertex>> gt3 = g.traversal().V(vertices).as("x").match(
+                as("a").in("belongsTo").as("b"),
+                as("b").in("dependsOn").as("c"),
+                as("c").out("belongsTo").hasId(select("x").id())
+        ).select("x", "a");
+
+        ArrayList<String[]> dependencies = new ArrayList<>();
+        List<Map<String, Vertex>> listm1 = gt1.toList();
+        for(Map<String, Vertex> m : listm1){
+            dependencies.add(new String[] {getName(g, m.get("x")), getName(g, m.get("y"))});
+        }
+
+        List<Map<String, Vertex>> listm2 = gt1.toList();
+        for(Map<String, Vertex> m : listm2){
+            dependencies.add(new String[] {getName(g, m.get("x")), getName(g, m.get("y"))});
+        }
+
+        List<Map<String, Vertex>> listm3 = gt1.toList();
+        for(Map<String, Vertex> m : listm3){
+            dependencies.add(new String[] {getName(g, m.get("x")), getName(g, m.get("y"))});
+        }
+        return new CommitDependenciesHash(collapseDependenciesHash(plt, dependencies));
+    }
+
+    private static ArrayList<PackageInfoHash> collapseDependenciesHash(PackageLookupTable plt, ArrayList<String[]> uncollapsedDeps){
+        for(String[] strs : uncollapsedDeps){
+            plt.storagePackage(strs[0]);
+            plt.storagePackage(strs[1]);
+        }
+        ArrayList<PackageInfoHash> dependencies = new ArrayList<>(plt.getSize());
+        for(int i = 0; i < plt.getSize(); ++i){
+            dependencies.add(new PackageInfoHash(i, new ArrayList<Integer>()));
+        }
+        for(String[] strs : uncollapsedDeps){
+            dependencies.get(plt.getKey(strs[0])).addDependency(plt.getKey(strs[1]));
+        }
+        return dependencies;
     }
 }
