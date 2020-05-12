@@ -11,6 +11,10 @@ public class CommitDependencies {
         this.packages = new ArrayList<>();
     }
 
+    public CommitDependencies(ArrayList<PackageInfo> packages){
+        this.packages = packages;
+    }
+
     public void addPackage(String packageName, ArrayList<String> dependencies){
         packages.add(new PackageInfo(packageName, dependencies));
     }

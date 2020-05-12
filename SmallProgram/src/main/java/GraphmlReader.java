@@ -1,6 +1,8 @@
+import org.apache.tinkerpop.gremlin.process.computer.GraphComputer;
 import org.apache.tinkerpop.gremlin.process.traversal.IO;
 import org.apache.tinkerpop.gremlin.process.traversal.Text;
 import org.apache.tinkerpop.gremlin.process.traversal.TextP;
+import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.structure.Edge;
@@ -32,7 +34,6 @@ public class GraphmlReader {
                 e.printStackTrace();
             }
         }
-
 
         graph.traversal().V()
                 .has("Type", TextP.containing("retrieved"))

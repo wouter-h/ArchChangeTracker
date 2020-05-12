@@ -9,6 +9,8 @@ import java.util.*;
 
 public class SmallProgram {
 
+    static long totalTime = 0;
+
     public static Csvobject[] readCSVFile(String loc){
         Csvobject[] csventries = new Csvobject[45];
         try(FileReader reader = new FileReader(loc);
@@ -95,10 +97,38 @@ public class SmallProgram {
     }
 
     public static void main(String[] args){
+        long programExecutionTimeStart = System.nanoTime();
         //Csvobject[] csventries = SmallProgram.readCSVFile("/home/muffin/Documents/Universiteit/master internship/structure101 spark dependency leaf packages.csv");
-        Graph g = GraphmlReader.getGraph(Paths.get("/home/muffin/Documents/Universiteit/master internship/graph-208-12_2_2020-1e6b4e813bd73f38742595b79692b2645a2d9c4d.graphml"));
+        //Graph g = GraphmlReader.getGraph(Paths.get("/home/muffin/Documents/Universiteit/master internship/graph-208-12_2_2020-1e6b4e813bd73f38742595b79692b2645a2d9c4d.graphml"));
+        Graph g1 = GraphmlReader.getGraph(Paths.get("/home/muffin/Documents/Universiteit/master internship/graph-2858-9_5_2020-910ee21bb9631b0036c69ed02dce9fdec15f1360.graphml"));
+        Graph g2 = GraphmlReader.getGraph(Paths.get("/home/muffin/Documents/Universiteit/master internship/graph-2859-9_5_2020-6b9e6b6d616f40980734ba21f056998a88d739c9.graphml"));
+        long readingTime = System.nanoTime();
+        long readingTimeDiff = readingTime - programExecutionTimeStart;
+        System.out.println("Reading time of 2 graphml files: " + ((double) (readingTimeDiff / 10000000)));
         //compareCSVtoGraphml(csventries, g);
-        CommitDependencies cd = Analyzer.getAllDependencies(g);
-        cd.prettyPrint();
+        CommitDependencies cd1 = null;
+        CommitDependencies cd2 = null;
+        //Analyzer.getAllDependencies(g1);
+        //Analyzer.getAllDependencies(g2);
+        cd1 = Analyzer.getAllDependencies1(g1);
+        cd2 = Analyzer.getAllDependencies1(g2);
+
+        for(int i = 0; i < 1; ++i) {
+            /*timing program*/
+            long startTime = System.nanoTime();
+            /*done timing program*/
+            DifferenceInfo di = DifferenceAnalyzer.findDifferences(cd2, cd1);
+            di.setGraphName("some name");
+            di.setComparedGraphName("some other name");
+            /*timing program*/
+            long endTime   = System.nanoTime();
+            totalTime += endTime - startTime;
+            System.out.println("\t totalTime: " + ((double) totalTime) / 10000000);
+            /*done timing program*/
+        }
+        //cd1.prettyPrint();
+        long programExecutionTimeEnd = System.nanoTime();
+        long programExecutionTimeDifference = programExecutionTimeEnd - programExecutionTimeStart;
+        System.out.println("Total program execution time in seconds:" + ((double) (programExecutionTimeDifference / 1000000000)));
     }
 }

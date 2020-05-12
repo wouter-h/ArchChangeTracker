@@ -11,6 +11,10 @@ public class PackageInfo {
         this.dependencies = dependencies;
     }
 
+    public void addDependency(String dependency){
+        this.dependencies.add(dependency);
+    }
+
     @Override
     public boolean equals(Object o){
         boolean retVal = false;
