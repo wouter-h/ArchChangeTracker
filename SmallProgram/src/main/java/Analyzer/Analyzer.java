@@ -1,3 +1,5 @@
+package Analyzer;
+
 import DataStorage.*;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.structure.Graph;
@@ -173,7 +175,6 @@ public class Analyzer {
         long startTime = System.nanoTime();
         CommitDependenciesHash cd = retrieveAllPackageDependenciesHash(g, retrieveAllPackages(g), plt);
         long endTime = System.nanoTime();
-        System.out.println("hash difference: " + ((double) endTime - startTime) / 10000000);
         return cd;
     }
 
@@ -202,12 +203,12 @@ public class Analyzer {
 
         List<Map<String, Vertex>> listm2 = gt1.toList();
         for(Map<String, Vertex> m : listm2){
-            dependencies.add(new String[] {getName(g, m.get("x")), getName(g, m.get("y"))});
+            dependencies.add(new String[] {getName(g, m.get("x")), getName(g, m.get("a"))});
         }
 
         List<Map<String, Vertex>> listm3 = gt1.toList();
         for(Map<String, Vertex> m : listm3){
-            dependencies.add(new String[] {getName(g, m.get("x")), getName(g, m.get("y"))});
+            dependencies.add(new String[] {getName(g, m.get("x")), getName(g, m.get("a"))});
         }
         return new CommitDependenciesHash(collapseDependenciesHash(plt, dependencies));
     }
