@@ -1,11 +1,8 @@
 package Analyzer;
 
-import DataStorage.CommitDependencies;
-import DataStorage.DifferenceInfo;
-import DataStorage.PackageInfo;
+import DataStorage.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class DifferenceAnalyzer {
 
@@ -15,89 +12,118 @@ public class DifferenceAnalyzer {
      * @param cd2
      * @return DifferenceInfo object with the differences packages, added packages and removed packages specified
      */
-    public static DifferenceInfo findDifferences(CommitDependencies cd1, CommitDependencies cd2){
-        ArrayList<String> differences = packagesChanged(cd1, cd2);
-        ArrayList<String> added = packagesAdded(cd1, cd2);
-        ArrayList<String> removed = packageRemoved(cd1, cd2);
-        return new DifferenceInfo(differences, added, removed);
+    public static DifferenceInfo findDifferences(PackageLookupTable plt1, PackageLookupTable plt2, ClassLookupTable clt1, ClassLookupTable clt2, CommitDependencies cd1, CommitDependencies cd2){
+        ArrayList<ChangedPackageI>[] differences = packagesChanged(plt1, plt2, cd1, cd2);
+        ArrayList<Integer> added = packagesAdded(plt1, plt2, cd1, cd2);
+        ArrayList<Integer> removed = packageRemoved(plt1, plt2, cd1, cd2);
+        ArrayList<ClassInfo> movedClasses = classesMoved(clt1, clt2, cd1, cd2);
+        return new DifferenceInfo(added, removed, differences[0], differences[1], movedClasses);
     }
 
-    public static ArrayList<String> packagesChanged(CommitDependencies cd1, CommitDependencies cd2){
+    private static ArrayList<ChangedPackageI>[] packagesChanged(PackageLookupTable plt1, PackageLookupTable plt2, CommitDependencies cd1, CommitDependencies cd2){
         ArrayList<PackageInfo> packages1 = cd1.getPackages();
         ArrayList<PackageInfo> packages2 = cd2.getPackages();
-        ArrayList<String> changedPackages = new ArrayList<>();
-
-        /*for(PackageInfo p1 : packages1){
-            if(packages2.contains(p1)){//COMPARES PACKAGE NAMES
-                int idx = packages2.indexOf(p1);
-                if(packageChanged(p1, packages2.get(idx))){
-                    changedPackages.add(p1.getPackageName());
-                }
-            }
-        }*/
-
-        /*--------HASHMAP VERSION---------*/
-        HashMap<String, PackageInfo> hm = new HashMap<>();
-        for(PackageInfo pi : packages2){hm.put(pi.getPackageName(), pi);}
+        ArrayList<ChangedPackageI> addedDependencies = new ArrayList<>();
+        ArrayList<ChangedPackageI> removedDependencies = new ArrayList<>();
 
         for(PackageInfo p1 : packages1){
-            if(hm.containsKey(p1.getPackageName())){//COMPARES PACKAGE NAMES
-                int idx = packages2.indexOf(p1);
-                if(packageChanged(p1, packages2.get(idx))){
-                    changedPackages.add(p1.getPackageName());
+            String str = plt1.getString(p1.getPackageName());
+            Integer key2 = plt2.getKey(str);
+            if(key2 != null){
+                ArrayList<Integer>[] packagesChanged = packageChanged(plt1, plt2, p1, packages2.get(key2));
+                if(packagesChanged[0].size() != 0){
+                    addedDependencies.add(new ChangedPackageInfo(p1.getPackageName(), packagesChanged[0]));
+                }
+                if(packagesChanged[1].size() != 0){
+                    removedDependencies.add(new ChangedPackageInfo(p1.getPackageName(), packagesChanged[1]));
                 }
             }
         }
-
-        return changedPackages;
+        ArrayList<ChangedPackageI>[] array = new ArrayList[2];
+        array[0] = addedDependencies;
+        array[1] = removedDependencies;
+        return array;
     }
 
-    private static boolean packageChanged(PackageInfo p1, PackageInfo p2){
-        ArrayList<String> dep1 = p1.getDependencies();
-        ArrayList<String> dep2 = p2.getDependencies();
-        /*if(dep1.size() != dep2.size()){
-            return true;
-        }
-        for(String d1 : dep1){
-            if(!dep2.contains(d1)){
-                return true;
-            }
-        }*/
+    private static ArrayList<Integer>[] packageChanged(PackageLookupTable plt1, PackageLookupTable plt2, PackageInfo p1, PackageInfo p2){
+        ArrayList<Integer> dep1 = p1.getDependencies();
+        ArrayList<Integer> dep2 = p2.getDependencies();
 
-        /*-------HASHMAP VERSION----------*/
-        HashMap<String, String> hm = new HashMap<>();
-        for(String str: dep2){hm.put(str, str);}
-        for(String d1 : dep1){
-            if(!hm.containsKey(d1)){
-                return true;
+        ArrayList<Integer> addedPackages = new ArrayList<>();
+        ArrayList<Integer> removedPackages = new ArrayList<>();
+        for(Integer d1 : dep1){
+            if(!dep2.contains(plt2.getKey(plt1.getString(d1)))){//added
+                addedPackages.add(d1);
             }
         }
-
-        return false;
+        for(Integer d2 : dep2){
+            if(!dep1.contains(plt1.getKey(plt2.getString(d2)))){//removed
+                removedPackages.add(d2);
+            }
+        }
+        ArrayList<Integer>[] array = new ArrayList[2];
+        array[0] = addedPackages;
+        array[1] = removedPackages;
+        return array;
     }
 
-    public static ArrayList<String> packagesAdded(CommitDependencies cd1, CommitDependencies cd2){
+    private static ArrayList<Integer> packagesAdded(PackageLookupTable plt1, PackageLookupTable plt2, CommitDependencies cd1, CommitDependencies cd2){
         ArrayList<PackageInfo> dep1 = cd1.getPackages();
         ArrayList<PackageInfo> dep2 = cd2.getPackages();
-        ArrayList<String> addedPackages = new ArrayList<>();
+        ArrayList<Integer> addedPackages = new ArrayList<>();
+
         for(PackageInfo pi1 : dep1){
-            if(!dep2.contains(pi1)){
+            Integer n = plt2.getKey(plt1.getString(pi1.getPackageName()));
+            if(n == null){
                 addedPackages.add(pi1.getPackageName());
             }
         }
         return addedPackages;
     }
 
-    public static ArrayList<String> packageRemoved(CommitDependencies cd1, CommitDependencies cd2){
+    private static ArrayList<Integer> packageRemoved(PackageLookupTable plt1, PackageLookupTable plt2, CommitDependencies cd1, CommitDependencies cd2){
         ArrayList<PackageInfo> dep1 = cd1.getPackages();
         ArrayList<PackageInfo> dep2 = cd2.getPackages();
-        ArrayList<String> removedPackages = new ArrayList<>();
+        ArrayList<Integer> removedPackages = new ArrayList<>();
 
         for(PackageInfo pi2 : dep2){
-            if(!dep1.contains(pi2)){
+            Integer n = plt1.getKey(plt2.getString(pi2.getPackageName()));
+            if(n == null){
                 removedPackages.add(pi2.getPackageName());
             }
         }
         return removedPackages;
+    }
+
+    private static ArrayList<ClassInfo> classesMoved(ClassLookupTable clt1, ClassLookupTable clt2, CommitDependencies cd1, CommitDependencies cd2){
+        ArrayList<String> classNames = cd1.getClasses();
+        ArrayList<ClassInfo> movedClasses = new ArrayList<>();
+        for(String className : classNames){
+            ArrayList<ClassInfo> targetClasses = clt2.get(className);
+            if(targetClasses != null){
+                ArrayList<ClassInfo> currentClasses = clt1.get(className);
+                movedClasses.addAll(changed(currentClasses, targetClasses));
+            }
+        }
+        return movedClasses;
+    }
+
+    private static ArrayList<ClassInfo> changed(ArrayList<ClassInfo> cia1, ArrayList<ClassInfo> cia2){
+        ArrayList<ClassInfo> movedClasses = new ArrayList<>();
+        for (ClassInfo classInfo : cia1) {
+            if (hasMoved(classInfo, cia2)) {
+                movedClasses.add(classInfo);
+            }
+        }
+        return movedClasses;
+    }
+
+    private static boolean hasMoved(ClassInfo ci, ArrayList<ClassInfo> cia){
+        for(ClassInfo classInfo : cia) {
+            if (ci.getPackageName().equals(classInfo.getPackageName())) {
+                return false;
+            }
+        }
+        return true;
     }
 }

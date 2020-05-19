@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestDifferenceAnalyzer {
+public class TestDifferenceAnalyzer {/*
     @Test
     public void testPackageChanged1(){
         CommitDependencies cd1 = new CommitDependencies();
@@ -279,5 +279,5 @@ public class TestDifferenceAnalyzer {
 
         assertEquals(1, retRes.size());
         assertEquals(retRes.get(0).equals("package1"), true);
-    }
+    }*/
 }

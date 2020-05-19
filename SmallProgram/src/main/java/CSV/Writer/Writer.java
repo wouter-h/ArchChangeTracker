@@ -1,8 +1,6 @@
 package CSV.Writer;
 
-import DataStorage.ChangedPackageI;
-import DataStorage.DifferenceInfoHash;
-import DataStorage.PackageLookupTable;
+import DataStorage.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -27,16 +25,10 @@ public class Writer {
         writeToFile(str + "\n");
     }
 
-    /*public void addEntry(DifferenceInfoHash dih, PackageLookupTable plt){
-        String entry = convertCommitToCSV(dih, plt);
-        writeToFile(entry);
-    }*/
-
-    public void addEntryWithNewline(DifferenceInfoHash dih, PackageLookupTable plt1, PackageLookupTable plt2){
-        String entry = convertCommitToCSV(dih, plt1, plt2);
+    public void addEntryWithNewline(DifferenceInfo dih, PackageLookupTable plt1, PackageLookupTable plt2, ClassLookupTable clt2, ClassLookupTable clt1, CommitDependencies cd){
+        String entry = convertCommitToCSV(dih, plt1, plt2, clt2, clt1, cd);
         StringBuilder sb = new StringBuilder(entry);
         sb.append("\n");
-        //System.out.println(sb.toString());
         writeToFile(sb.toString());
     }
 
@@ -44,7 +36,7 @@ public class Writer {
         out.write(str);
     }
 
-    private String convertCommitToCSV(DifferenceInfoHash dih, PackageLookupTable plt1, PackageLookupTable plt2){
+    private String convertCommitToCSV(DifferenceInfo dih, PackageLookupTable plt1, PackageLookupTable plt2, ClassLookupTable clt2, ClassLookupTable clt1, CommitDependencies cd){
         String commit = dih.getGraphName();
         String comparedToCommit = dih.getComparedGraphName();
         ArrayList<ChangedPackageI> addedPackageDependencies = dih.getAddedPackageDependencies();
@@ -79,7 +71,7 @@ public class Writer {
 
         sb.append("\"");
         sb.append("[");
-        sb.append(changedPackagesToCSV1(plt1, plt1, addedPackageDependencies, "added"));
+        sb.append(changedPackagesToCSV(plt1, plt1, addedPackageDependencies, "added"));
         sb.append("]");
         sb.append("\"");
 
@@ -87,25 +79,61 @@ public class Writer {
 
         sb.append("\"");
         sb.append("[");
-        sb.append(changedPackagesToCSV1(plt2, plt1, removedPackageDepencies, "removed"));
+        sb.append(changedPackagesToCSV(plt2, plt1, removedPackageDepencies, "removed"));
         sb.append("]");
         sb.append("\"");
 
+        sb.append(",");
+
+        sb.append("\"");
+        sb.append("[");
+        sb.append(classesToCSV(clt2, clt1, dih.getMovedClasses()));
+        sb.append("]");
+        sb.append("\"");
+
+        sb.append(",");
+
+        sb.append(dih.getAddedPackageCount());
+
+        sb.append(",");
+
+        sb.append(dih.getRemovedPackageCount());
+
+        sb.append(",");
+
+        sb.append(dih.getAddedDependenciesCount());
+
+        sb.append(",");
+
+        sb.append(dih.getRemovedDependenciesCount());
+
+        sb.append(",");
+
+        sb.append(dih.getMovedClassesCount());
+
+        sb.append(",");
+
+        sb.append(cd.getNrPackages());
+
+        sb.append(",");
+
+        sb.append(cd.getNumberOfDependencies());
+
         return sb.toString();
     }
 
-    private String changedPackagesToCSV1(PackageLookupTable plt, PackageLookupTable pltName, ArrayList<ChangedPackageI> cpi, String mode){
+    private String changedPackagesToCSV(PackageLookupTable plt, PackageLookupTable pltName, ArrayList<ChangedPackageI> cpi, String mode){
         if(cpi.size() == 0) return "";
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i < cpi.size() - 1 ; ++i){
-            sb.append(changedPackageInfoToCSV1(plt, pltName, cpi.get(i), mode));
+            sb.append(changedPackageInfoToCSV(plt, pltName, cpi.get(i), mode));
             sb.append(",");
         }
-        sb.append(changedPackageInfoToCSV1(plt, pltName, cpi.get(cpi.size() - 1), mode));
+        sb.append(changedPackageInfoToCSV(plt, pltName, cpi.get(cpi.size() - 1), mode));
         return sb.toString();
     }
 
-    private String changedPackageInfoToCSV1(PackageLookupTable plt, PackageLookupTable pltName, ChangedPackageI cpi, String mode){
+    private String changedPackageInfoToCSV(PackageLookupTable plt, PackageLookupTable pltName, ChangedPackageI cpi, String mode){
         StringBuilder sb = new StringBuilder();
         sb.append("{");
         sb.append("name:");
@@ -137,6 +165,19 @@ public class Writer {
 
     private String getName(PackageLookupTable plt, Integer n){
         return plt.getString(n);
+    }
+
+    private String classesToCSV(ClassLookupTable clt2, ClassLookupTable clt1, ArrayList<ClassInfo> cia){
+        if(cia.size() == 0) return "";
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i < cia.size() - 1; ++i){
+            sb.append(cia.get(i).getPackageName());
+            sb.append(cia.get(i).getName());
+            sb.append(",");
+        }
+        sb.append(cia.get(cia.size() - 1).getPackageName());
+        sb.append(cia.get(cia.size() - 1).getName());
+        return sb.toString();
     }
 
     public void close(){

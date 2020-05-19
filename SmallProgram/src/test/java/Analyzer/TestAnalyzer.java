@@ -1,14 +1,6 @@
 package Analyzer;
 
-import DataStorage.CommitDependenciesHash;
-import DataStorage.PackageInfoHash;
-import DataStorage.PackageLookupTable;
-import org.apache.tinkerpop.gremlin.structure.Graph;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
