@@ -3,15 +3,15 @@ package DataStorage;
 import java.util.ArrayList;
 
 public class PackageInfo {
-    private String packageName;
-    private ArrayList<String> dependencies;
+    private Integer packageName;
+    private ArrayList<Integer> dependencies;
 
-    public PackageInfo(String packageName, ArrayList<String> dependencies){
+    public PackageInfo(int packageName, ArrayList<Integer> dependencies){
         this.packageName = packageName;
         this.dependencies = dependencies;
     }
 
-    public void addDependency(String dependency){
+    public void addDependency(Integer dependency){
         this.dependencies.add(dependency);
     }
 
@@ -20,7 +20,7 @@ public class PackageInfo {
         boolean retVal = false;
         if(o instanceof PackageInfo){
             PackageInfo p = (PackageInfo) o;
-            retVal = p.packageName.equals(this.packageName);
+            retVal = p.packageName.intValue() == this.packageName.intValue();
         }
         return retVal;
     }
@@ -30,11 +30,11 @@ public class PackageInfo {
         return packageName.hashCode();
     }
 
-    public String getPackageName() {
+    public int getPackageName() {
         return packageName;
     }
 
-    public ArrayList<String> getDependencies() {
+    public ArrayList<Integer> getDependencies() {
         return dependencies;
     }
 }
