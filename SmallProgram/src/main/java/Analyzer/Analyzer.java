@@ -57,6 +57,7 @@ public class Analyzer {
 
     public static CommitDependencies getAllDependencies(PackageLookupTable plt, Graph g){
         ArrayList<Vertex> vertices = retrieveAllPackages(g);
+        findAllDependencies(plt, g, vertices);
         CommitDependencies cd = retrieveAllPackageDependencies(g, vertices, plt);
         cd.setNrPackages(vertices.size());
         return cd;
@@ -70,14 +71,14 @@ public class Analyzer {
         //Get the packages V depends on with class dependencies <> package dependency relations
         GraphTraversal<Vertex, Map<String, Vertex>> gt2 = g.traversal().V(vertices).as("x").match(
                 as("a").in("afferentOf").as("b"),
-                as("b").out("belongsTo").hasId(select("x").id())
-        ).select("x", "a");
+                as("b").out("belongsTo").hasId(select("x").id()).as("y")
+        ).select("x", "y");
         //Get the packages V depends on with class <> class dependency relations
         GraphTraversal<Vertex, Map<String, Vertex>> gt3 = g.traversal().V(vertices).as("x").match(
                 as("a").in("belongsTo").as("b"),
                 as("b").in("dependsOn").as("c"),
-                as("c").out("belongsTo").hasId(select("x").id())
-        ).select("x", "a");
+                as("c").out("belongsTo").hasId(select("x").id()).as("y")
+        ).select("x", "y");
 
         ArrayList<String[]> dependencies = new ArrayList<>();
         List<Map<String, Vertex>> listm1 = gt1.toList();
@@ -85,23 +86,29 @@ public class Analyzer {
             dependencies.add(new String[] {getName(g, m.get("x")), getName(g, m.get("y"))});
         }
 
-        List<Map<String, Vertex>> listm2 = gt1.toList();
+        List<Map<String, Vertex>> listm2 = gt2.toList();
         for(Map<String, Vertex> m : listm2){
-            dependencies.add(new String[] {getName(g, m.get("x")), getName(g, m.get("a"))});
+            dependencies.add(new String[] {getName(g, m.get("x")), getName(g, m.get("y"))});
         }
 
-        List<Map<String, Vertex>> listm3 = gt1.toList();
+        List<Map<String, Vertex>> listm3 = gt3.toList();
         for(Map<String, Vertex> m : listm3){
-            dependencies.add(new String[] {getName(g, m.get("x")), getName(g, m.get("a"))});
+            dependencies.add(new String[] {getName(g, m.get("x")), getName(g, m.get("y"))});
         }
         return new CommitDependencies(collapseDependencies(plt, dependencies));
     }
 
+    private static void findAllDependencies(PackageLookupTable plt, Graph g, ArrayList<Vertex> packages){
+        for(Vertex v : packages){
+            plt.storagePackage(getName(g, v));
+        }
+    }
+
     private static ArrayList<PackageInfo> collapseDependencies(PackageLookupTable plt, ArrayList<String[]> uncollapsedDeps){
-        for(String[] strs : uncollapsedDeps){
+        /*for(String[] strs : uncollapsedDeps){
             plt.storagePackage(strs[0]);
             plt.storagePackage(strs[1]);
-        }
+        }*/
         ArrayList<PackageInfo> dependencies = new ArrayList<>(plt.getSize());
         for(int i = 0; i < plt.getSize(); ++i){
             dependencies.add(new PackageInfo(i, new ArrayList<Integer>()));
