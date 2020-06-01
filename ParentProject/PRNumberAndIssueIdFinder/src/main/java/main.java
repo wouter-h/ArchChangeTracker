@@ -12,75 +12,75 @@ import java.util.ArrayList;
 import java.util.Base64;
 
 public class main {
-/*
-    private static ArrayList<String> getCommits(String path){
-        ArrayList<String> commits = new ArrayList<>();
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(path));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+    /*
+        private static ArrayList<String> getCommits(String path){
+            ArrayList<String> commits = new ArrayList<>();
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(new FileReader(path));
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            try {
+                int i = 0;
+                String line = null;
+                while ((line = br.readLine()) != null) {
+                    if(i != 0){
+                        String[] parts = line.split(",");
+                        commits.add(parts[0]);
+                    }
+                    ++i;
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            return commits;
         }
-        try {
-            int i = 0;
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                if(i != 0){
-                    String[] parts = line.split(",");
-                    commits.add(parts[0]);
+
+        private static Info getPRNumberAndIssueId(String str){
+            JSONObject json = new JSONObject(str);
+            if((Integer) json.get("total_count") == 0) return new Info("", -1);
+            JSONArray jsonArray = json.getJSONArray("items");
+            JSONObject jsonObject = jsonArray.getJSONObject(jsonArray.length() - 1);
+            Integer number = (Integer) jsonObject.get("number");
+            String title = (String) jsonObject.get("title");
+            String issueId = getIssueId(title, "TAJO-");
+            System.out.println("number: " + number);
+            System.out.println("title: " + title);
+            System.out.println("issueId: " + issueId);
+            return new Info(issueId, number);
+        }
+
+        private static String getIssueId(String title, String token){
+            int start = title.indexOf(token);
+            if(start == -1){return "NOT FOUND";}
+            int i = start + token.length();
+            StringBuilder issueId = new StringBuilder(token);
+            boolean keepReading = true;
+            while(i < title.length() && keepReading){
+                char c = title.charAt(i);
+                if(Character.isDigit(c)){
+                    issueId.append(c);
+                } else {
+                    keepReading = false;
                 }
                 ++i;
             }
+            return issueId.toString();
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        return commits;
-    }
-
-    private static Info getPRNumberAndIssueId(String str){
-        JSONObject json = new JSONObject(str);
-        if((Integer) json.get("total_count") == 0) return new Info("", -1);
-        JSONArray jsonArray = json.getJSONArray("items");
-        JSONObject jsonObject = jsonArray.getJSONObject(jsonArray.length() - 1);
-        Integer number = (Integer) jsonObject.get("number");
-        String title = (String) jsonObject.get("title");
-        String issueId = getIssueId(title, "TAJO-");
-        System.out.println("number: " + number);
-        System.out.println("title: " + title);
-        System.out.println("issueId: " + issueId);
-        return new Info(issueId, number);
-    }
-
-    private static String getIssueId(String title, String token){
-        int start = title.indexOf(token);
-        if(start == -1){return "NOT FOUND";}
-        int i = start + token.length();
-        StringBuilder issueId = new StringBuilder(token);
-        boolean keepReading = true;
-        while(i < title.length() && keepReading){
-            char c = title.charAt(i);
-            if(Character.isDigit(c)){
-                issueId.append(c);
-            } else {
-                keepReading = false;
-            }
-            ++i;
-        }
-        return issueId.toString();
-    }
-*/
+    */
     public static void main(String[] args){
         if(args.length != 6){
             System.out.println("Insufficient arguments.\n" +
                     "Please provide a <originalCSVFileLoc> <fileLoc> <csvFileLoc> <delimeter> <issueToken> <prToken>\n" +
-                    "originalCSVFileLoc: pathto the original csv file that was fed to the bash script analyzer\n" +
+                    "originalCSVFileLoc: path to the original csv file that was fed to the bash script analyzer\n" +
                     "fileLoc: path to the file that will be anayzed\n" +
                     "csvFileLoc: path to the csv file where the results will be written to.\n" +
                     "delimeter: the separator used to make a distinction between commits in the file that will be analyzed.\n" +
                     "issueToken: the token that will be used to recognise issues (includes lines, e.g. -, so TAJO- for issues of the form: TAJO-xxx)" +
                     "prToken: the token that will be used to recognise pull request numbers (e.g. Closes: # for pull request numbers of the form: Closes #xxx"
-                    );
+            );
             return;
         }
         String fileLocOriginalCSVFile = args[0];
