@@ -7,8 +7,16 @@ import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 import java.io.*;
 import java.nio.file.Path;
 
+/** Class that has a function that can read in a graphml file.
+ *
+ */
 public class GraphmlReader {
 
+    /**Reads in the graph associated to the Path graphMLPath
+     *
+     * @param graphMLPath the path of which a Graph needs to be read in. This path should direct towards a graphml file.
+     * @return Graph containing the information in the graphml file given by the graphMLPath
+     */
     public static Graph getGraph(Path graphMLPath) {
         Graph graph = null;
         if (graph == null) {

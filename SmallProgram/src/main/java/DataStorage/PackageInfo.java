@@ -12,7 +12,9 @@ public class PackageInfo {
     }
 
     public void addDependency(Integer dependency){
-        this.dependencies.add(dependency);
+        if(!this.dependencies.contains(dependency)) {
+            this.dependencies.add(dependency);
+        }
     }
 
     @Override

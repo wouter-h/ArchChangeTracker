@@ -2,6 +2,10 @@ package DataStorage;
 
 import java.util.ArrayList;
 
+/** ChangedPackageInfo is responsible to store the package name and the dependencies this package has.
+ *  In order to retrieve the package name or the package dependencies as a string a package lookup table has to be used.
+ *  This class merely stores the integers that can be used to look up the string name in a package lookup table.
+ */
 public class ChangedPackageInfo implements ChangedPackageI {
     private Integer packageName;
     private ArrayList<Integer> dependencies;
