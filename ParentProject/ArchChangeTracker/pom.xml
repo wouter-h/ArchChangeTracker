@@ -61,7 +61,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>SmallProgram</mainClass>
+                    <mainClass>main.SmallProgram</mainClass>
                 </configuration>
             </plugin>
         </plugins>

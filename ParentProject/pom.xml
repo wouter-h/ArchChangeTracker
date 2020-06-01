@@ -10,8 +10,9 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-    <module>ArchChangeTracker</module>
+        <module>ArchChangeTracker</module>
         <module>PRNumberAndIssueIdFinder</module>
+        <module>SequentialRunner</module>
     </modules>
 
     <build>

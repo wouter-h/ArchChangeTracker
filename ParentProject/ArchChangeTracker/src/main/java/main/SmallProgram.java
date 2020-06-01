@@ -1,3 +1,5 @@
+package main;
+
 import Analyzer.Analyzer;
 import Args.ArgsManager;
 import CSV.Writer.Writer;
@@ -50,6 +52,23 @@ public class SmallProgram {
     }
 
     public static void main(String[] args){
+        System.out.println("In ArchChangeTracker!");
+        ArgsManager argsManager = new ArgsManager();
+        if(!argsManager.isValidArgs(args)){
+            return;
+        }
+        long startTime = System.nanoTime();
+        ArrayList<File> files = new DirectoryReader(argsManager.getInputFileLoc()).read();
+        ArrayList<GraphmlFileInfo> fileinfos = Util.fileToGraphmlFileInfo(files);
+        Util.sort(fileinfos);
+        run(argsManager, fileinfos);
+        long endTime = System.nanoTime();
+        long diff = endTime - startTime;
+        System.out.println("total run time in seconds: " + ((double) diff / 1000000000));
+    }
+
+    public void secondMainFunction(String[] args){
+        System.out.println("In ArchChangeTracker!");
         ArgsManager argsManager = new ArgsManager();
         if(!argsManager.isValidArgs(args)){
             return;

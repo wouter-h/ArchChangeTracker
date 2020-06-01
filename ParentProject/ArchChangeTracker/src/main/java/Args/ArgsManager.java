@@ -33,7 +33,7 @@ public class ArgsManager {
         return false;
     }
 
-    private void printArgsInstructions(){
+    public void printArgsInstructions(){
         System.out.println("Stub error message");
     }
 
