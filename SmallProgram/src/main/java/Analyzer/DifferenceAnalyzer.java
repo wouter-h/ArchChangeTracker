@@ -6,11 +6,15 @@ import java.util.ArrayList;
 
 public class DifferenceAnalyzer {
 
-    /** Finds the difference between cd1 compared to cd2.
+    /** Finds the differences between 2 CommitDependencies. [1] will be compared to [2].
      *
-     * @param cd1
-     * @param cd2
-     * @return DifferenceInfo object with the differences packages, added packages and removed packages specified
+     * @param plt1 The packageLookUpTable that will be compared to PackageLookUpTable 2.
+     * @param plt2 The packageLookUpTable that will be compared by PackageLookUpTable 1.
+     * @param clt1 The ClassLookUpTable that will be compared to ClassLookUpTable 2.
+     * @param clt2 The ClassLookUpTable that will be compared by ClassLookUpTable 1.
+     * @param cd1 The CommitDependencies that will be compared to CommitDependencies 2.
+     * @param cd2 The CommitDependencies that will be compared by CommitDependencies 1.
+     * @return DifferenceInfo object that contains the differences.
      */
     public static DifferenceInfo findDifferences(PackageLookupTable plt1, PackageLookupTable plt2, ClassLookupTable clt1, ClassLookupTable clt2, CommitDependencies cd1, CommitDependencies cd2){
         ArrayList<ChangedPackageI>[] differences = packagesChanged(plt1, plt2, cd1, cd2);
@@ -20,6 +24,15 @@ public class DifferenceAnalyzer {
         return new DifferenceInfo(added, removed, differences[0], differences[1], movedClasses);
     }
 
+    /** Finds all packages that changed. Changed in this context meaning whether its dependencies changed.
+     * These changed dependencies could either be new ones or removed ones.
+     *
+     * @param plt1 The PackageLookUpTable used to in combination with CommitDependencies 1.
+     * @param plt2 The PackageLookUpTable used to in combination with CommitDependencies 2.
+     * @param cd1 The CommitDependencies that will be compared to CommitDependencies 2.
+     * @param cd2 The CommitDependencies that will be compared by CommitDependencies 1.
+     * @return ArrayList of ChangedPackageI that stores the information of the packages that got changed.
+     */
     private static ArrayList<ChangedPackageI>[] packagesChanged(PackageLookupTable plt1, PackageLookupTable plt2, CommitDependencies cd1, CommitDependencies cd2){
         ArrayList<PackageInfo> packages1 = cd1.getPackages();
         ArrayList<PackageInfo> packages2 = cd2.getPackages();
@@ -45,6 +58,14 @@ public class DifferenceAnalyzer {
         return array;
     }
 
+    /**
+     *
+     * @param plt1
+     * @param plt2
+     * @param p1
+     * @param p2
+     * @return
+     */
     private static ArrayList<Integer>[] packageChanged(PackageLookupTable plt1, PackageLookupTable plt2, PackageInfo p1, PackageInfo p2){
         ArrayList<Integer> dep1 = p1.getDependencies();
         ArrayList<Integer> dep2 = p2.getDependencies();

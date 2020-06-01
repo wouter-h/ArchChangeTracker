@@ -1,4 +1,5 @@
 import Analyzer.Analyzer;
+import Args.ArgsManager;
 import CSV.Writer.Writer;
 import DataStorage.*;
 import Reader.GraphmlFile.GraphmlFileInfo;
@@ -12,9 +13,9 @@ import java.util.*;
 
 public class SmallProgram {
 
-    public static void run(ArrayList<GraphmlFileInfo> files){
+    public static void run(ArgsManager argsManager, ArrayList<GraphmlFileInfo> files){
         if(files.size() < 2) return;
-        Writer writer = new Writer("/home/muffin/Documents/Universiteit/master internship/csvfiles/1.csv");
+        Writer writer = new Writer(argsManager.getOutputFileLoc());
         writer.columnNames("commit,comparedTo,packages added,packages removed,dependency added,dependency removed,class moved,number of packages added,number of packages removed,number of dependencies added,number of dependencies removed,number of moved classes,number of packages,number of dependencies");
         Graph g1 = GraphmlReader.getGraph(files.get(0).getFile().toPath());
         Graph g2;
@@ -49,11 +50,15 @@ public class SmallProgram {
     }
 
     public static void main(String[] args){
+        ArgsManager argsManager = new ArgsManager();
+        if(!argsManager.isValidArgs(args)){
+            return;
+        }
         long startTime = System.nanoTime();
-        ArrayList<File> files = new DirectoryReader("/home/muffin/Documents/Universiteit/master internship/tajo_arcan/tajo_arcan/").read();
+        ArrayList<File> files = new DirectoryReader(argsManager.getInputFileLoc()).read();
         ArrayList<GraphmlFileInfo> fileinfos = Util.fileToGraphmlFileInfo(files);
         Util.sort(fileinfos);
-        run(fileinfos);
+        run(argsManager, fileinfos);
         long endTime = System.nanoTime();
         long diff = endTime - startTime;
         System.out.println("total run time in seconds: " + ((double) diff / 1000000000));

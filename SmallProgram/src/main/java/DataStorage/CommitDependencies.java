@@ -2,10 +2,15 @@ package DataStorage;
 
 import java.util.ArrayList;
 
+/** A class that stores all the package a commit has and all the classes a package has.
+ * This class also has a field with the number of packages.
+ * The packages are stored as integer codes. The classes as strings.
+ * In order to compare package/classes between commits a lookuptable needs to be used.
+ */
 public class CommitDependencies {
     private ArrayList<PackageInfo> packages;
     private ArrayList<String> classes;
-    private int nrPackages;
+    private int nrPackages; /*Probably useless now*/
 
     public CommitDependencies(){
         this.packages = new ArrayList<>();
