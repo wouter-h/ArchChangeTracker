@@ -18,7 +18,7 @@ public class SmallProgram {
     public static void run(ArgsManager argsManager, ArrayList<GraphmlFileInfo> files){
         if(files.size() < 2) return;
         Writer writer = new Writer(argsManager.getOutputFileLoc());
-        writer.columnNames("commit,comparedTo,packages added,packages removed,dependency added,dependency removed,class moved,number of packages added,number of packages removed,number of dependencies added,number of dependencies removed,number of moved classes,number of packages,number of dependencies");
+        writer.columnNames("commit,comparedTo,packages added,packages removed,dependency added,dependency removed,class moved,number of packages added,number of packages removed,number of dependencies added,number of dependencies removed,number of moved classes,number of packages,number of dependencies,MTO,A0,A2A,A2A Copy");
         Graph g1 = GraphmlReader.getGraph(files.get(0).getFile().toPath());
         Graph g2;
         PackageLookupTable plt1 = new PackageLookupTable();
@@ -31,7 +31,7 @@ public class SmallProgram {
         DifferenceInfo dihStub = DifferenceAnalyzer.findDifferences(plt1, new PackageLookupTable(), clt1, new ClassLookupTable(), cdh1, new CommitDependencies());
         dihStub.setGraphName(files.get(0).getCommit());
         dihStub.setComparedGraphName("");
-        writer.addEntryWithNewline(dihStub, plt1, plt2, clt1, clt2, cdh1);
+        writer.addEntryWithNewline(dihStub, plt1, plt2, clt1, clt2, cdh1, 2);
         int i = 1;
         do{
             g2 = GraphmlReader.getGraph(files.get(i).getFile().toPath());
@@ -40,7 +40,7 @@ public class SmallProgram {
             DifferenceInfo dih = DifferenceAnalyzer.findDifferences(plt2, plt1, clt2, clt1, cdh2, cdh1);
             dih.setGraphName(files.get(i).getCommit());
             dih.setComparedGraphName(files.get(i - 1).getCommit());
-            writer.addEntryWithNewline(dih, plt2, plt1, clt2, clt1, cdh2);
+            writer.addEntryWithNewline(dih, plt2, plt1, clt2, clt1, cdh2, i + 2);
             cdh1 = cdh2;
             plt1 = plt2;
             clt1 = clt2;

@@ -25,8 +25,8 @@ public class Writer {
         writeToFile(str + "\n");
     }
 
-    public void addEntryWithNewline(DifferenceInfo dih, PackageLookupTable plt1, PackageLookupTable plt2, ClassLookupTable clt2, ClassLookupTable clt1, CommitDependencies cd){
-        String entry = convertCommitToCSV(dih, plt1, plt2, clt2, clt1, cd);
+    public void addEntryWithNewline(DifferenceInfo dih, PackageLookupTable plt1, PackageLookupTable plt2, ClassLookupTable clt2, ClassLookupTable clt1, CommitDependencies cd, int csvRow){
+        String entry = convertCommitToCSV(dih, plt1, plt2, clt2, clt1, cd, csvRow);
         StringBuilder sb = new StringBuilder(entry);
         sb.append("\n");
         writeToFile(sb.toString());
@@ -36,7 +36,7 @@ public class Writer {
         out.write(str);
     }
 
-    private String convertCommitToCSV(DifferenceInfo dih, PackageLookupTable plt1, PackageLookupTable plt2, ClassLookupTable clt2, ClassLookupTable clt1, CommitDependencies cd){
+    private String convertCommitToCSV(DifferenceInfo dih, PackageLookupTable plt1, PackageLookupTable plt2, ClassLookupTable clt2, ClassLookupTable clt1, CommitDependencies cd, int csvRow){
         String commit = dih.getGraphName();
         String comparedToCommit = dih.getComparedGraphName();
         ArrayList<ChangedPackageI> addedPackageDependencies = dih.getAddedPackageDependencies();
@@ -119,6 +119,22 @@ public class Writer {
 
         sb.append(cd.getNumberOfDependencies());
 
+        sb.append(",");
+
+        sb.append("=H" + csvRow + "+I" + csvRow + "+J" + csvRow + "+K" + csvRow + "+L" + csvRow);
+
+        sb.append(",");
+
+        sb.append("=M" + csvRow + "+N" + csvRow);
+
+        sb.append(",");
+
+        String s = String.format("=((O%d/(P%d+P%d)))*100", csvRow, csvRow, csvRow - 1);
+        sb.append(s);
+
+        sb.append(",");
+
+        sb.append("");
         return sb.toString();
     }
 
