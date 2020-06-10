@@ -58,13 +58,14 @@ public class DifferenceAnalyzer {
         return array;
     }
 
-    /**
+    /** Finds all dependencies that changed of a package 1, which will be compared to a package 2.
+     * A dependency change is either a new dependency (added) or removed dependency (removed).
      *
-     * @param plt1
-     * @param plt2
-     * @param p1
-     * @param p2
-     * @return
+     * @param plt1 PackageLookUpTable belonging to package 1
+     * @param plt2 PackageLookUpTable belonging to package 2
+     * @param p1 Package 1, the more recent package
+     * @param p2 Package 2, the older package
+     * @return An array of size 2, with in the first index added packages, and the second index removed packages.
      */
     private static ArrayList<Integer>[] packageChanged(PackageLookupTable plt1, PackageLookupTable plt2, PackageInfo p1, PackageInfo p2){
         ArrayList<Integer> dep1 = p1.getDependencies();
@@ -88,6 +89,15 @@ public class DifferenceAnalyzer {
         return array;
     }
 
+    /** Finds out which packages have been added to a CommitDependencies object 1. This CommitDepencies 1 object will be compared
+     * to a CommitDependencies 2 object.
+     *
+     * @param plt1 The PackageLookUpTable belonging to the first commit dependencies object (cd1).
+     * @param plt2 The PackageLookUpTable belonging to the second commit dependencies object (cd2).
+     * @param cd1 The CommitDependencies object that will be compared to cd2.
+     * @param cd2 The CommitDependencies object that will be compared by cd1.
+     * @return An ArrayList of Integers with the newly added packages.
+     */
     private static ArrayList<Integer> packagesAdded(PackageLookupTable plt1, PackageLookupTable plt2, CommitDependencies cd1, CommitDependencies cd2){
         ArrayList<PackageInfo> dep1 = cd1.getPackages();
         ArrayList<PackageInfo> dep2 = cd2.getPackages();
@@ -102,6 +112,15 @@ public class DifferenceAnalyzer {
         return addedPackages;
     }
 
+    /** Finds out which packages have been removed in a CommitDependencies object 1. This CommitDepencies 1 object will be compared
+     * to a CommitDependencies 2 object.
+     *
+     * @param plt1 The PackageLookUpTable belonging to the first commit dependencies object (cd1).
+     * @param plt2 The PackageLookUpTable belonging to the second commit dependencies object (cd2).
+     * @param cd1 The CommitDependencies object that will be compared to cd2.
+     * @param cd2 The CommitDependencies object that will be compared by cd1.
+     * @return An ArrayList of Integers with the removed packages.
+     */
     private static ArrayList<Integer> packageRemoved(PackageLookupTable plt1, PackageLookupTable plt2, CommitDependencies cd1, CommitDependencies cd2){
         ArrayList<PackageInfo> dep1 = cd1.getPackages();
         ArrayList<PackageInfo> dep2 = cd2.getPackages();
@@ -116,6 +135,14 @@ public class DifferenceAnalyzer {
         return removedPackages;
     }
 
+    /** Finds which classes have been moved in 2 commits. It purely compares the name of a class, not the contents.
+     *
+     * @param clt1 The ClassLookUpTable belonging to the first CommitDependencies object (cd1).
+     * @param clt2 The ClassLookUpTable belonging to the second CommitDependencies object (cd2).
+     * @param cd1 The first CommitDependencies object that will be compared to cd2.
+     * @param cd2 The second CommitDependencies object that will be compared by cd1.
+     * @return An ArrayList of ClassInfo which has the moved classes.
+     */
     private static ArrayList<ClassInfo> classesMoved(ClassLookupTable clt1, ClassLookupTable clt2, CommitDependencies cd1, CommitDependencies cd2){
         ArrayList<String> classNames = cd1.getClasses();
         ArrayList<ClassInfo> movedClasses = new ArrayList<>();
@@ -129,6 +156,12 @@ public class DifferenceAnalyzer {
         return movedClasses;
     }
 
+    /** Finds which classes have been moved between 2 ArrayLists of ClassInfos.
+     *
+     * @param cia1 The first ArrayList of classes that will be compared to the cia2.
+     * @param cia2 The second ArrayList of classes that will be compared by cia1.
+     * @return An ArrayList of moved classes.
+     */
     private static ArrayList<ClassInfo> changed(ArrayList<ClassInfo> cia1, ArrayList<ClassInfo> cia2){
         ArrayList<ClassInfo> movedClasses = new ArrayList<>();
         for (ClassInfo classInfo : cia1) {
@@ -139,6 +172,13 @@ public class DifferenceAnalyzer {
         return movedClasses;
     }
 
+    /** Returns whether a class has moved when compared to an ArrayList of classes. It does so by comparing the
+     * package name of the classes.
+     *
+     * @param ci The ClassInfo (class) that will be compared.
+     * @param cia The ArrayList of classes that will be checked to see whether the class has moved.
+     * @return True if it moved. False otherwise.
+     */
     private static boolean hasMoved(ClassInfo ci, ArrayList<ClassInfo> cia){
         for(ClassInfo classInfo : cia) {
             if (ci.getPackageName().equals(classInfo.getPackageName())) {
