@@ -18,7 +18,7 @@ public class SmallProgram {
     public static void run(ArgsManager argsManager, ArrayList<GraphmlFileInfo> files){
         if(files.size() < 2) return;
         Writer writer = new Writer(argsManager.getOutputFileLoc());
-        writer.columnNames("commit,comparedTo,packages added,packages removed,dependency added,dependency removed,class moved,number of packages added,number of packages removed,number of dependencies added,number of dependencies removed,number of moved classes,number of packages,number of dependencies,MTO,A0,A2A,A2A Copy");
+        writer.columnNames("row,commit,comparedTo,packages added,packages removed,dependency added,dependency removed,class moved,number of packages added,number of packages removed,number of dependencies added,number of dependencies removed,number of moved classes,number of packages,number of dependencies,MTO,A0,A2A,A2A Copy");
         Graph g1 = GraphmlReader.getGraph(files.get(0).getFile().toPath());
         Graph g2;
         PackageLookupTable plt1 = new PackageLookupTable();

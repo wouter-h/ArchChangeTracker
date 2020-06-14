@@ -5,6 +5,9 @@ import DataStorage.*;
 import java.io.*;
 import java.util.ArrayList;
 
+/** The class used to write data to a csv file
+ *
+ */
 public class Writer {
 
     private FileWriter fw;
@@ -45,6 +48,10 @@ public class Writer {
         ArrayList<Integer> removedPackages = dih.getRemovedPackages();
 
         StringBuilder sb = new StringBuilder();
+
+        sb.append(csvRow - 1);
+
+        sb.append(",");
 
         sb.append(commit);
 
@@ -121,15 +128,15 @@ public class Writer {
 
         sb.append(",");
 
-        sb.append("=H" + csvRow + "+I" + csvRow + "+J" + csvRow + "+K" + csvRow + "+L" + csvRow);
+        sb.append("=J" + csvRow + "+K" + csvRow + "+L" + csvRow + "+M" + csvRow + "+N" + csvRow);
 
         sb.append(",");
 
-        sb.append("=M" + csvRow + "+N" + csvRow);
+        sb.append("=O" + csvRow + "+P" + csvRow);
 
         sb.append(",");
 
-        String s = String.format("=((O%d/(P%d+P%d)))*100", csvRow, csvRow, csvRow - 1);
+        String s = String.format("=((Q%d/(R%d+R%d)))*100", csvRow, csvRow, csvRow - 1);
         sb.append(s);
 
         sb.append(",");

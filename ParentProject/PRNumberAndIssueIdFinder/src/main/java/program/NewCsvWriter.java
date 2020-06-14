@@ -20,9 +20,10 @@ public class NewCsvWriter {
         }
     }
 
-    public void writeField(String field){
+    public void writeCommaField(String field){
         writeToFile("," + field);
     }
+    public void writeFieldComma(String field){ writeToFile(field + ","); }
 
     public void writeLine(String line){
         writeToFile(line);

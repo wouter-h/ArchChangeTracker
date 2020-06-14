@@ -2,6 +2,9 @@ package DataStorage;
 
 import java.util.ArrayList;
 
+/** The object that contains the information about the differences between 2 commits
+ *
+ */
 public class DifferenceInfo {
     private String graphName;
     private String comparedGraphName;
@@ -76,6 +79,11 @@ public class DifferenceInfo {
         return this.removedPackages.size();
     }
 
+    /** Returns the number of dependencies that have been added
+     * (dependencies of packages)
+     *
+     * @return number of dependencies that were added
+     */
     public int getAddedDependenciesCount(){
         int count = 0;
         for(ChangedPackageI cpi : addedPackageDependencies){
@@ -84,6 +92,11 @@ public class DifferenceInfo {
         return count;
     }
 
+    /** Returns the number of dependencies that have been removed
+     * (dependencies of packages)
+     *
+     * @return number of dependencies that were removed
+     */
     public int getRemovedDependenciesCount(){
         int count = 0;
         for(ChangedPackageI cpi : removedPackageDependencies){
@@ -92,6 +105,10 @@ public class DifferenceInfo {
         return count;
     }
 
+    /** Returns the number of moved classes
+     *
+     * @return number of moved classes
+     */
     public int getMovedClassesCount(){
         return this.movedClasses.size();
     }

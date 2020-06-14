@@ -8,6 +8,10 @@ public class PackageLookupTable {
     private HashMap<Integer, String> storage = new HashMap<>();
     private HashMap<String, Integer> packageLookUp = new HashMap<>();
 
+    /** Stores a package inside 2 hashmaps. One with the <id, string> the other one with <string, id>.
+     *
+     * @param str the package to be stored
+     */
     public void storagePackage(String str){
         if(!storage.containsValue(str)){
             storage.put(count, str);
@@ -26,14 +30,28 @@ public class PackageLookupTable {
         }
     }
 
+    /** Retrieves the string belonging to an id. If the id does not exist, return null.
+     *
+     * @param n the id to find the string of
+     * @return the string belonging to the id
+     */
     public String getString(int n){
         return storage.get(n);
     }
 
+    /** Retrieves the id belonging to a string. If the string does not exist, return null.
+     *
+     * @param str the string to find the id of
+     * @return the id belonging to the string
+     */
     public Integer getKey(String str){
         return packageLookUp.get(str);
     }
 
+    /** Returns the size of the hashmap
+     *
+     * @return the size
+     */
     public int getSize(){
         return count;
     }

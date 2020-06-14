@@ -7,6 +7,7 @@ public class mainProgram {
     private String fileLocOriginalCSVFile;
     private String fileLoc1;
     private String fileLoc2;
+    private String fileLoc3;
     private String csvFileLoc;
     private String delimiter;
     private String issueToken;
@@ -22,39 +23,23 @@ public class mainProgram {
                 "delimiter: the separator used to make a distinction between commits in the first file that will be analyzed.\n" +
                 "issueToken: the token that will be used to recognise issues (includes lines, e.g. -, so TAJO- for issues of the form: TAJO-xxx) in the first file.\n" +
                 "prToken: the token that will be used to recognise pull request numbers (e.g. Closes: # for pull request numbers of the form: Closes #xxx in the first file.\n" +
-                "fileLoc2: path to the second file that will be analyzed."
+                "fileLoc2: path to the second file that will be analyzed.\n" +
+                "fileLoc3: path to the third file that will be analyzed"
         );
     }
 
     public static void main(String[] args){
         System.out.println("In PRNumberAndIssueIdFinder!");
-        if(args.length != 7){
+        if(args.length != 8){
             new mainProgram().printArgsInstructions();
             return;
         }
         new mainProgram().anAdditionMainFunction(args);
-        /*
-        String fileLocOriginalCSVFile = args[0];
-        String fileLoc = args[1];
-        String csvFileLoc = args[2];
-        String delimiter = args[3];
-        String issueToken = args[4];
-        String prToken = args[5];
-        FileReader fr = new FileReader(fileLoc);
-        String fileAsAString = fr.read();
-        FileReader originalCSVFileReader = new FileReader(fileLocOriginalCSVFile);
-        ArrayList<String> originalCSVFile = originalCSVFileReader.readLines();
-        ArrayList<Info> commitInfos = FileAnalyzer.getCommitInfo(fileAsAString, delimiter, issueToken, prToken);
-        CSVWriter writer = new CSVWriter(csvFileLoc);
-        writer.columnNames(originalCSVFile.get(0) + ",issueId,prNumber");
-        writer.writeCommitInfos(originalCSVFile, commitInfos);
-        writer.close();
-        */
     }
 
     public void anAdditionMainFunction(String[] args){
         System.out.println("In PRNumberAndIssueIdFinder!");
-        if(args.length != 7){
+        if(args.length != 8){
             new mainProgram().printArgsInstructions();
             return;
         }
@@ -65,6 +50,7 @@ public class mainProgram {
         this.issueToken = args[4];
         this.prToken = args[5];
         this.fileLoc2 = args[6];
+        this.fileLoc3 = args[7];
         execute();
     }
 
@@ -78,40 +64,56 @@ public class mainProgram {
         analyzers.add(new PrAndIssueAnalyzer(fileLoc1, columns, delimiter, issueToken, prToken));
     }
 
+    private void addDateLinker(){
+        String[] columns = {"date"};
+        analyzers.add(new DateAnalyzer(fileLoc3, columns));
+    }
+
     private void execute(){
         addGapAnalyzer();
         addPrAndIssueFinder();
+        addDateLinker();
         for(BashFileAnalyzer bfa : analyzers){
             bfa.read();
             bfa.analyze();
         }
         ArrayList<String> originalCsvLines = new FileReader(fileLocOriginalCSVFile).readLines();
         NewCsvWriter ncw = new NewCsvWriter(csvFileLoc);
+        for(String column : analyzers.get(2).getColumnNames()){
+            ncw.writeFieldComma(column);
+        }
         ncw.writeLine(originalCsvLines.get(0));//column names
-        for(BashFileAnalyzer bfa : analyzers){
+        for(int i = 0; i < analyzers.size() - 1; ++i){
+            BashFileAnalyzer bfa = analyzers.get(i);
             for(String columnName : bfa.getColumnNames()) {
-                ncw.writeField(columnName);
+                ncw.writeCommaField(columnName);
             }
         }
-        //all other data
         ncw.writeNewLineCharacter();
+        //all other data
         System.out.println("originalCsvLines.size(): + " + (originalCsvLines.size() - 1));
         for(int i = 1; i < originalCsvLines.size() - 1; ++i) {
+            for (String field : analyzers.get(2).getLineOfData()) {
+                ncw.writeFieldComma(field);
+            }
             ncw.writeLine(originalCsvLines.get(i));
-            for (BashFileAnalyzer bfa : analyzers) {
+            for (int j = 0; j < analyzers.size() - 1; ++j){
+                BashFileAnalyzer bfa = analyzers.get(j);
                 String[] lineOfData = bfa.getLineOfData();
                 for (String field : lineOfData) {
-                    ncw.writeField(field);
+                    ncw.writeCommaField(field);
                 }
             }
             ncw.writeNewLineCharacter();
         }
+        for (String field : analyzers.get(2).getLineOfData()) {
+            ncw.writeFieldComma(field);
+        }
         ncw.writeLine(originalCsvLines.get(originalCsvLines.size() - 1));
-        System.out.println("\n\nI GOT HERE\n");
-        for (BashFileAnalyzer bfa : analyzers) {
-            String[] lineOfData = bfa.getLineOfData();
+        for (int i = 0; i < analyzers.size() - 1; ++i){
+            String[] lineOfData = analyzers.get(i).getLineOfData();
             for (String field : lineOfData) {
-                ncw.writeField(field);
+                ncw.writeCommaField(field);
             }
         }
         ncw.close();
