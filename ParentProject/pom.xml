@@ -11,7 +11,7 @@
 
     <modules>
         <module>ArchChangeTracker</module>
-        <module>PRNumberAndIssueIdFinder</module>
+        <module>ScriptManager</module>
         <module>SequentialRunner</module>
     </modules>
 
