@@ -3,7 +3,7 @@ package program;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-public class PrAndIssueAnalyzer implements BashFileAnalyzer {
+public class PrAndIssueAnalyzer implements FileScript, Writable {
     private String inputBashFilePath;
     private String contents;
     private ArrayList<Info> infos;
@@ -27,7 +27,7 @@ public class PrAndIssueAnalyzer implements BashFileAnalyzer {
         this.contents = fr.read();
     }
 
-    public void analyze(){
+    public void execute(){
         String[] parts = contents.split(Pattern.quote(delimiter));
         for(String part : parts){
             infos.add(new Info(

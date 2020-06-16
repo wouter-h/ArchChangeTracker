@@ -12,7 +12,8 @@ public class mainProgram {
     private String delimiter;
     private String issueToken;
     private String prToken;
-    private ArrayList<BashFileAnalyzer> analyzers = new ArrayList<>();
+    //private ArrayList<BashFileAnalyzer> analyzers = new ArrayList<>();
+    private ScriptManager scriptManager = new ScriptManager();
 
     public void printArgsInstructions(){
         System.out.println("Incorrect input args.\n" +
@@ -56,28 +57,36 @@ public class mainProgram {
 
     private void addGapAnalyzer(){
         String[] columns = {"gap"};
-        analyzers.add(new GapAnalyzer(fileLoc2, columns));
+        scriptManager.addScript(new GapAnalyzer(fileLoc2, columns));
     }
 
     private void addPrAndIssueFinder(){
         String[] columns = {"issueId", "prNumber"};
-        analyzers.add(new PrAndIssueAnalyzer(fileLoc1, columns, delimiter, issueToken, prToken));
+        scriptManager.addScript(new PrAndIssueAnalyzer(fileLoc1, columns, delimiter, issueToken, prToken));
     }
 
     private void addDateLinker(){
         String[] columns = {"date"};
-        analyzers.add(new DateAnalyzer(fileLoc3, columns));
+        scriptManager.addScript(new DateAnalyzer(fileLoc3, columns));
+    }
+
+    private void addArchChangeTrackerDataWriter(Script archChangeTrackerData){
+        scriptManager.addScript(archChangeTrackerData);
     }
 
     private void execute(){
+        ArchChangeTrackerDataWriter archChangeTrackerDataWriter = new ArchChangeTrackerDataWriter(fileLocOriginalCSVFile);
         addGapAnalyzer();
         addPrAndIssueFinder();
         addDateLinker();
-        for(BashFileAnalyzer bfa : analyzers){
-            bfa.read();
-            bfa.analyze();
-        }
-        ArrayList<String> originalCsvLines = new FileReader(fileLocOriginalCSVFile).readLines();
+        addArchChangeTrackerDataWriter(archChangeTrackerDataWriter);
+        int[] writeOrder = {2, 3, 0, 1};
+        scriptManager.execute();
+        WriteManager writeManager = new WriteManager(writeOrder, scriptManager.getScripts(), csvFileLoc, archChangeTrackerDataWriter.getSize());
+        writeManager.write();
+
+        //reading in scv file produced by ArchChangeTracker
+        /*ArrayList<String> originalCsvLines = new FileReader(fileLocOriginalCSVFile).readLines();
         NewCsvWriter ncw = new NewCsvWriter(csvFileLoc);
         for(String column : analyzers.get(2).getColumnNames()){
             ncw.writeFieldComma(column);
@@ -117,5 +126,6 @@ public class mainProgram {
             }
         }
         ncw.close();
+        */
     }
 }

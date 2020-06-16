@@ -2,7 +2,7 @@ package program;
 
 import java.util.ArrayList;
 
-public class GapAnalyzer implements BashFileAnalyzer {
+public class GapAnalyzer implements FileScript, Writable {
     private String inputBashFilePath;
     private String contents;
     private ArrayList<Integer> gaps;
@@ -21,7 +21,7 @@ public class GapAnalyzer implements BashFileAnalyzer {
         this.contents = fr.read();
     }
 
-    public void analyze(){
+    public void execute(){
         System.out.println("analyzing...");
         String[] lines = contents.split("\n");
         System.out.println("\n\n\n\n\n\n\n\nCONTENTS\n\n\n\n\n\n" + contents);

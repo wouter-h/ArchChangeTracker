@@ -2,7 +2,7 @@ package program;
 
 import java.util.ArrayList;
 
-public class DateAnalyzer implements BashFileAnalyzer {
+public class DateAnalyzer implements FileScript, Writable {
     private String inputBashFilePath;
     private String contents;
     private ArrayList<String> dates;
@@ -20,7 +20,7 @@ public class DateAnalyzer implements BashFileAnalyzer {
         this.contents = fr.read();
     }
 
-    public void analyze(){
+    public void execute(){
         System.out.println("analyzing...");
         String[] lines = contents.split("\n");
         for(String line : lines){
