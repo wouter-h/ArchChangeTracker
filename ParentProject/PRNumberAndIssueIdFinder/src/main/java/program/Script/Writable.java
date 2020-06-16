@@ -1,4 +1,4 @@
-package program;
+package program.Script;
 
 public interface Writable {
     public String[] getColumnNames();

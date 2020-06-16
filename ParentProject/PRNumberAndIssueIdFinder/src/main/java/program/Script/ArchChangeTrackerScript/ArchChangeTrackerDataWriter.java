@@ -1,4 +1,8 @@
-package program;
+package program.Script.ArchChangeTrackerScript;
+
+import program.FileReader;
+import program.Script.FileScript;
+import program.Script.Writable;
 
 import java.util.ArrayList;
 

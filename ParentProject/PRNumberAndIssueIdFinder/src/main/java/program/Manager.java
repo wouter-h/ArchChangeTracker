@@ -1,8 +1,12 @@
 package program;
 
-import java.util.ArrayList;
+import program.Script.*;
+import program.Script.ArchChangeTrackerScript.ArchChangeTrackerDataWriter;
+import program.Script.DateScript.DateScript;
+import program.Script.GapScript.GapScript;
+import program.Script.PrAndIssueScript.PrAndIssueScript;
 
-public class mainProgram {
+public class Manager {
 
     private String fileLocOriginalCSVFile;
     private String fileLoc1;
@@ -32,16 +36,17 @@ public class mainProgram {
     public static void main(String[] args){
         System.out.println("In PRNumberAndIssueIdFinder!");
         if(args.length != 8){
-            new mainProgram().printArgsInstructions();
+            new Manager().printArgsInstructions();
             return;
         }
-        new mainProgram().anAdditionMainFunction(args);
+        new Manager().anAdditionMainFunction(args);
     }
 
+    /*reflection issues in maven or something. That's why the name of this method is so strange*/
     public void anAdditionMainFunction(String[] args){
         System.out.println("In PRNumberAndIssueIdFinder!");
         if(args.length != 8){
-            new mainProgram().printArgsInstructions();
+            new Manager().printArgsInstructions();
             return;
         }
         this.fileLocOriginalCSVFile = args[0];
@@ -57,17 +62,17 @@ public class mainProgram {
 
     private void addGapAnalyzer(){
         String[] columns = {"gap"};
-        scriptManager.addScript(new GapAnalyzer(fileLoc2, columns));
+        scriptManager.addScript(new GapScript(fileLoc2, columns));
     }
 
     private void addPrAndIssueFinder(){
         String[] columns = {"issueId", "prNumber"};
-        scriptManager.addScript(new PrAndIssueAnalyzer(fileLoc1, columns, delimiter, issueToken, prToken));
+        scriptManager.addScript(new PrAndIssueScript(fileLoc1, columns, delimiter, issueToken, prToken));
     }
 
     private void addDateLinker(){
         String[] columns = {"date"};
-        scriptManager.addScript(new DateAnalyzer(fileLoc3, columns));
+        scriptManager.addScript(new DateScript(fileLoc3, columns));
     }
 
     private void addArchChangeTrackerDataWriter(Script archChangeTrackerData){
@@ -84,48 +89,5 @@ public class mainProgram {
         scriptManager.execute();
         WriteManager writeManager = new WriteManager(writeOrder, scriptManager.getScripts(), csvFileLoc, archChangeTrackerDataWriter.getSize());
         writeManager.write();
-
-        //reading in scv file produced by ArchChangeTracker
-        /*ArrayList<String> originalCsvLines = new FileReader(fileLocOriginalCSVFile).readLines();
-        NewCsvWriter ncw = new NewCsvWriter(csvFileLoc);
-        for(String column : analyzers.get(2).getColumnNames()){
-            ncw.writeFieldComma(column);
-        }
-        ncw.writeLine(originalCsvLines.get(0));//column names
-        for(int i = 0; i < analyzers.size() - 1; ++i){
-            BashFileAnalyzer bfa = analyzers.get(i);
-            for(String columnName : bfa.getColumnNames()) {
-                ncw.writeCommaField(columnName);
-            }
-        }
-        ncw.writeNewLineCharacter();
-        //all other data
-        System.out.println("originalCsvLines.size(): + " + (originalCsvLines.size() - 1));
-        for(int i = 1; i < originalCsvLines.size() - 1; ++i) {
-            for (String field : analyzers.get(2).getLineOfData()) {
-                ncw.writeFieldComma(field);
-            }
-            ncw.writeLine(originalCsvLines.get(i));
-            for (int j = 0; j < analyzers.size() - 1; ++j){
-                BashFileAnalyzer bfa = analyzers.get(j);
-                String[] lineOfData = bfa.getLineOfData();
-                for (String field : lineOfData) {
-                    ncw.writeCommaField(field);
-                }
-            }
-            ncw.writeNewLineCharacter();
-        }
-        for (String field : analyzers.get(2).getLineOfData()) {
-            ncw.writeFieldComma(field);
-        }
-        ncw.writeLine(originalCsvLines.get(originalCsvLines.size() - 1));
-        for (int i = 0; i < analyzers.size() - 1; ++i){
-            String[] lineOfData = analyzers.get(i).getLineOfData();
-            for (String field : lineOfData) {
-                ncw.writeCommaField(field);
-            }
-        }
-        ncw.close();
-        */
     }
 }

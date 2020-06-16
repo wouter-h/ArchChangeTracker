@@ -1,5 +1,8 @@
 package program;
 
+import program.Script.Script;
+import program.Script.Writable;
+
 import java.util.ArrayList;
 
 public class WriteManager {

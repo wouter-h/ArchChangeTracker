@@ -1,20 +1,59 @@
-package program;
+package program.Script.PrAndIssueScript;
+
+import program.FileReader;
+import program.Info;
+import program.Script.FileScript;
+import program.Script.Writable;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-public class FileAnalyzer {
-    public static ArrayList<Info> getCommitInfo(String str, String delimiter, String issueToken, String prToken){
-        String[] parts = str.split(Pattern.quote(delimiter));
-        ArrayList<Info> commitInfos = new ArrayList<>();
+public class PrAndIssueScript implements FileScript, Writable {
+    private String inputBashFilePath;
+    private String contents;
+    private ArrayList<Info> infos;
+    private String[] columnNames;
+    private int i = 0;
+    private String delimiter;
+    private String issueToken;
+    private String prToken;
+
+    public PrAndIssueScript(String inputBashFilePath, String[] columnNames, String delimiter, String issueToken, String prToken){
+        this.inputBashFilePath = inputBashFilePath;
+        this.columnNames = columnNames;
+        this.delimiter = delimiter;
+        this.issueToken = issueToken;
+        this.prToken = prToken;
+        infos = new ArrayList<>();
+    }
+
+    public void read(){
+        FileReader fr = new FileReader(inputBashFilePath);
+        this.contents = fr.read();
+    }
+
+    public void execute(){
+        String[] parts = contents.split(Pattern.quote(delimiter));
         for(String part : parts){
-            commitInfos.add(new Info(
+            infos.add(new Info(
                     getCommit(part),
                     getIssueKey(part, issueToken),
                     getPrNumbers(part, prToken)
             ));
         }
-        return commitInfos;
+    }
+
+    public String[] getColumnNames(){
+        return this.columnNames;
+    }
+
+    public String[] getLineOfData(){
+        String[] toRet = {
+                infos.get(i).getIssueKey(),
+                '"' + arrayListToString(infos.get(i).getPrNumbers()) + '"'
+        };
+        ++i;
+        return toRet;
     }
 
     private static String getCommit(String str){
@@ -74,5 +113,19 @@ public class FileAnalyzer {
             }
         }
         return array;
+    }
+
+    private String arrayListToString(ArrayList<Integer> array){
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        for(int i = 0; i < array.size() - 1; ++i){
+            sb.append(array.get(i));
+            sb.append(',');
+        }
+        if(array.size() > 0){
+            sb.append(array.get(array.size() - 1));
+        }
+        sb.append(']');
+        return sb.toString();
     }
 }

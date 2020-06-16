@@ -1,19 +1,22 @@
-package program;
+package program.Script.DateScript;
+
+import program.FileReader;
+import program.Script.FileScript;
+import program.Script.Writable;
 
 import java.util.ArrayList;
 
-public class GapAnalyzer implements FileScript, Writable {
+public class DateScript implements FileScript, Writable {
     private String inputBashFilePath;
     private String contents;
-    private ArrayList<Integer> gaps;
+    private ArrayList<String> dates;
     private String[] columnNames;
     private int index = 0;
 
-    public GapAnalyzer(String inputBashFilePath, String[] columnNames){
-        System.out.println("I AM HERE NOW\n\n\n\n\n\n");
+    public DateScript(String inputBashFilePath, String[] columnNames){
         this.inputBashFilePath = inputBashFilePath;
         this.columnNames = columnNames;
-        gaps = new ArrayList<>();
+        dates = new ArrayList<>();
     }
 
     public void read(){
@@ -24,10 +27,9 @@ public class GapAnalyzer implements FileScript, Writable {
     public void execute(){
         System.out.println("analyzing...");
         String[] lines = contents.split("\n");
-        System.out.println("\n\n\n\n\n\n\n\nCONTENTS\n\n\n\n\n\n" + contents);
         for(String line : lines){
-            int i = Integer.parseInt(line.split(",")[2]);
-            gaps.add(i);
+            String s = line.split(",")[1];
+            dates.add(s);
         }
     }
 
@@ -36,7 +38,7 @@ public class GapAnalyzer implements FileScript, Writable {
     }
 
     public String[] getLineOfData(){
-        String[] toRet = {gaps.get(index).toString()};
+        String[] toRet = {dates.get(index)};
         ++index;
         return toRet;
     }
