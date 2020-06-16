@@ -8,13 +8,13 @@ import java.util.ArrayList;
 public class WriteManager {
     private int[] orderToWriteIn;
     private ArrayList<Script> scripts;
-    private NewCsvWriter csvWriter;
+    private CsvWriter csvWriter;
     private int size;
 
     public WriteManager(int[] orderToWriteIn, ArrayList<Script> scripts, String writeLocation, int size){
         this.orderToWriteIn = orderToWriteIn;
         this.scripts = scripts;
-        this.csvWriter = new NewCsvWriter(writeLocation);
+        this.csvWriter = new CsvWriter(writeLocation);
         this.size = size;
     }
 

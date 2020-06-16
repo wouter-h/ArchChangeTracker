@@ -5,12 +5,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class NewCsvWriter {
+public class CsvWriter {
     private FileWriter fw;
     private BufferedWriter bw;
     private PrintWriter out;
 
-    public NewCsvWriter(String fileLoc){
+    public CsvWriter(String fileLoc){
         try {
             fw = new FileWriter(fileLoc, true);
             bw = new BufferedWriter(fw);
