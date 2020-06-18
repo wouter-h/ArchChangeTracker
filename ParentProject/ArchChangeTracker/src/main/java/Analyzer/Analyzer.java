@@ -107,6 +107,7 @@ public class Analyzer {
         //package dependencies
         GraphTraversal<Vertex, Map<String, Vertex>> gt1 = g.traversal().V(vertices).as("x").out("packageIsAfferentOf").as("y").select("x", "y");
 
+        /*DONT THINK THIS PART IS NEEDED (NOR CORRECT)*/
         //class dependencies
         //Get the packages V depends on with class dependencies <> package dependency relations
         GraphTraversal<Vertex, Map<String, Vertex>> gt2 = g.traversal().V(vertices).as("x").match(
@@ -119,6 +120,7 @@ public class Analyzer {
                 as("b").in("dependsOn").as("c"),
                 as("c").out("belongsTo").hasId(select("x").id()).as("y")
         ).select("x", "y");
+        /*DONT THINK THIS PART IS NEEDED (NOR CORRECT)*/
 
         ArrayList<String[]> dependencies = new ArrayList<>();
         List<Map<String, Vertex>> listm1 = gt1.toList();
