@@ -6,6 +6,7 @@ package Args;
 public class ArgsManager {
     private String inputFileLoc;
     private String outputFileLoc;
+    private String name;
 
     /** Does some basic checks to see whether the args aren't completely wrong.
      *
@@ -30,7 +31,7 @@ public class ArgsManager {
      * @return True if the length is 4, otherwise false.
      */
     private boolean checkArgsLength(String[] args){
-        return args.length == 4;
+        return args.length == 6;
     }
 
     /** Checks whether the first token equals "-if", the third token equals "-of", the second token should not be empty
@@ -43,11 +44,14 @@ public class ArgsManager {
     private boolean hasValidInputArgs(String[] args){
         if(args[0].equals("-if") &&
                 args[2].equals("-of") &&
+                args[4].equals("-name") &&
                 !args[1].isEmpty() && !args[1].isBlank() &&
-                !args[3].isEmpty() && !args[3].isBlank()
+                !args[3].isEmpty() && !args[3].isBlank() &&
+                !args[5].isEmpty() && !args[5].isBlank()
         ){
             this.inputFileLoc = args[1];
             this.outputFileLoc = args[3];
+            this.name = args[5];
             return true;
         }
         return false;
@@ -57,7 +61,7 @@ public class ArgsManager {
      *
      */
     public void printArgsInstructions(){
-        System.out.println("Stub error message");
+        System.out.println("Args are invalid");
     }
 
     /** Returns the input file location.
@@ -75,4 +79,6 @@ public class ArgsManager {
     public String getOutputFileLoc() {
         return outputFileLoc;
     }
+
+    public String getName() { return name;}
 }

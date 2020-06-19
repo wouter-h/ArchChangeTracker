@@ -5,8 +5,8 @@ import java.util.HashMap;
 
 public class PackageLookupTable {
     private int count = 0;
-    private HashMap<Integer, String> storage = new HashMap<>();
-    private HashMap<String, Integer> packageLookUp = new HashMap<>();
+    private HashMap<Integer, String> storage = new HashMap<>(250);
+    private HashMap<String, Integer> packageLookUp = new HashMap<>(250);
 
     /** Stores a package inside 2 hashmaps. One with the <id, string> the other one with <string, id>.
      *

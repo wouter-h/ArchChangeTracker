@@ -76,7 +76,7 @@ public class Analyzer {
      * @param g the graph in which the package vertices need to be found.
      * @return ArrayList of vertices (Vertex) that have a label package.
      */
-    private static ArrayList<Vertex> retrieveAllPackages(Graph g){
+    public static ArrayList<Vertex> retrieveAllPackages(Graph g){
         GraphTraversal<Vertex, Vertex> gt = g.traversal().V().hasLabel("package");
         ArrayList<Vertex> vertices = new ArrayList<>();
         while(gt.hasNext()){
@@ -107,6 +107,7 @@ public class Analyzer {
         //package dependencies
         GraphTraversal<Vertex, Map<String, Vertex>> gt1 = g.traversal().V(vertices).as("x").out("packageIsAfferentOf").as("y").select("x", "y");
 
+        /*DONT THINK THIS PART IS NEEDED (NOR CORRECT)*/
         //class dependencies
         //Get the packages V depends on with class dependencies <> package dependency relations
         GraphTraversal<Vertex, Map<String, Vertex>> gt2 = g.traversal().V(vertices).as("x").match(
@@ -119,6 +120,7 @@ public class Analyzer {
                 as("b").in("dependsOn").as("c"),
                 as("c").out("belongsTo").hasId(select("x").id()).as("y")
         ).select("x", "y");
+        /*DONT THINK THIS PART IS NEEDED (NOR CORRECT)*/
 
         ArrayList<String[]> dependencies = new ArrayList<>();
         List<Map<String, Vertex>> listm1 = gt1.toList();
@@ -180,5 +182,37 @@ public class Analyzer {
             clt.store(ci);
         }
         return classes;
+    }
+
+    public static void filterValidPackages(Graph g, PackageLookupTable allSystemPackages, ArrayList<Vertex> packages){
+        ArrayList<Vertex> possibleSystemPackages = new ArrayList<>(packages.size());
+        //GraphTraversal<Vertex, Vertex> gt1 = g.traversal().V(packages).has("Type", TextP.containing("retrieved"));
+        //GraphTraversal<Vertex, Vertex> gt2 = g.traversal().V(packages).has("PackageType", TextP.containing("Retrieved"));
+        GraphTraversal<Vertex, Vertex> gt4 = g.traversal().V(packages).has("PackageType", TextP.containing("System"));
+        //GraphTraversal<Vertex, Vertex> gt3 = g.traversal().V(packages).has("ClassType", TextP.containing("Retrieved"));
+        /*while(gt1.hasNext()){
+            possibleSystemPackages.add(gt1.next());
+        }*/
+        ArrayList<Vertex> currentValidPackages = new ArrayList<>(possibleSystemPackages.size());
+        while(gt4.hasNext()){
+            Vertex systemPackage = gt4.next();
+            allSystemPackages.storagePackage(getName(g, systemPackage));
+            currentValidPackages.add(systemPackage);
+        }
+
+        /*while(gt2.hasNext()){
+            possibleSystemPackages.add(gt2.next());
+        }
+        */
+        /*while(gt3.hasNext()){
+            possibleSystemPackages.add(gt3.next());
+        }*/
+        /*for(Vertex possibleSystemPackage : possibleSystemPackages){
+            //The package is currently exists as a systempackage, so add it, even though it is a retrieved package
+            if(allSystemPackages.getKey(getName(g, possibleSystemPackage)) != null){
+                currentValidPackages.add(possibleSystemPackage);
+            }
+        }
+        */
     }
 }

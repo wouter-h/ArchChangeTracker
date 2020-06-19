@@ -17,7 +17,7 @@ public class GraphmlReader {
      * @param graphMLPath the path of which a Graph needs to be read in. This path should direct towards a graphml file.
      * @return Graph containing the information in the graphml file given by the graphMLPath
      */
-    public static Graph getGraph(Path graphMLPath) {
+    public static Graph getGraph(Path graphMLPath, String name) {
         Graph graph = null;
         if (graph == null) {
             graph = TinkerGraph.open();
@@ -35,7 +35,7 @@ public class GraphmlReader {
         }
 
 
-        graph.traversal().V()
+        /*graph.traversal().V()
                 .has("Type", TextP.containing("retrieved"))
                 .drop().iterate();
         graph.traversal().V()
@@ -44,7 +44,11 @@ public class GraphmlReader {
         graph.traversal().V()
                 .has("ClassType", TextP.containing("Retrieved"))
                 .drop().iterate();
+        */
 
+        graph.traversal().V()
+                .has("name", TextP.notContaining(name))
+                .drop().iterate();
 
         return graph;
     }

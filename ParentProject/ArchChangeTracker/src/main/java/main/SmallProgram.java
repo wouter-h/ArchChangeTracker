@@ -10,6 +10,8 @@ import Reader.GraphmlReader;
 import Reader.DirectoryReader;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import Analyzer.DifferenceAnalyzer;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+
 import java.io.*;
 import java.util.*;
 
@@ -19,7 +21,7 @@ public class SmallProgram {
         if(files.size() < 2) return;
         Writer writer = new Writer(argsManager.getOutputFileLoc());
         writer.columnNames("row,commit,comparedTo,packages added,packages removed,dependency added,dependency removed,class moved,number of packages added,number of packages removed,number of dependencies added,number of dependencies removed,number of moved classes,number of packages,number of dependencies,MTO,A0,A2A,A2A Copy");
-        Graph g1 = GraphmlReader.getGraph(files.get(0).getFile().toPath());
+        Graph g1 = GraphmlReader.getGraph(files.get(0).getFile().toPath(), argsManager.getName());
         Graph g2;
         PackageLookupTable plt1 = new PackageLookupTable();
         CommitDependencies cdh1 = Analyzer.getAllDependencies(plt1, g1);
@@ -34,7 +36,7 @@ public class SmallProgram {
         writer.addEntryWithNewline(dihStub, plt1, plt2, clt1, clt2, cdh1, 2);
         int i = 1;
         do{
-            g2 = GraphmlReader.getGraph(files.get(i).getFile().toPath());
+            g2 = GraphmlReader.getGraph(files.get(i).getFile().toPath(), argsManager.getName());
             cdh2 = Analyzer.getAllDependencies(plt2, g2);
             cdh2.setClasses(Analyzer.getClasses(clt2, g2));
             DifferenceInfo dih = DifferenceAnalyzer.findDifferences(plt2, plt1, clt2, clt1, cdh2, cdh1);
@@ -61,6 +63,7 @@ public class SmallProgram {
         ArrayList<File> files = new DirectoryReader(argsManager.getInputFileLoc()).read();
         ArrayList<GraphmlFileInfo> fileinfos = Util.fileToGraphmlFileInfo(files);
         Util.sort(fileinfos);
+        //constructGlobalPackageObject(fileinfos);
         run(argsManager, fileinfos);
         long endTime = System.nanoTime();
         long diff = endTime - startTime;
@@ -77,9 +80,18 @@ public class SmallProgram {
         ArrayList<File> files = new DirectoryReader(argsManager.getInputFileLoc()).read();
         ArrayList<GraphmlFileInfo> fileinfos = Util.fileToGraphmlFileInfo(files);
         Util.sort(fileinfos);
+        //constructGlobalPackageObject(fileinfos);
         run(argsManager, fileinfos);
         long endTime = System.nanoTime();
         long diff = endTime - startTime;
         System.out.println("total run time in seconds: " + ((double) diff / 1000000000));
     }
+
+    /*private static void constructGlobalPackageObject(ArrayList<GraphmlFileInfo> filesInfos) {
+        for (int i = 0; i < filesInfos.size(); ++i) {
+            Graph g = GraphmlReader.getGraph(filesInfos.get(i).getFile().toPath());
+            ArrayList<Vertex> vertices = Analyzer.retrieveAllPackages(g);
+            //Analyzer.filterValidPackages(g, allValidPackages, vertices);
+        }
+    }*/
 }
