@@ -6,7 +6,7 @@ package Args;
 public class ArgsManager {
     private String inputFileLoc;
     private String outputFileLoc;
-    private String name;
+    private String[] name;
 
     /** Does some basic checks to see whether the args aren't completely wrong.
      *
@@ -51,10 +51,21 @@ public class ArgsManager {
         ){
             this.inputFileLoc = args[1];
             this.outputFileLoc = args[3];
-            this.name = args[5];
+            this.name = createNames(args[5]);
             return true;
         }
         return false;
+    }
+
+    private String[] createNames(String input){
+        if(input.charAt(0) != '['){//not an array
+            String[] name = {input};
+            return name;
+        } else { //array
+            String unfilteredNames = input.substring(1, input.length() - 2);
+            String[] names = unfilteredNames.split(",");
+            return names;
+        }
     }
 
     /** Prints the error message if the arguments are incorrect.
@@ -80,5 +91,5 @@ public class ArgsManager {
         return outputFileLoc;
     }
 
-    public String getName() { return name;}
+    public String[] getName() { return name;}
 }

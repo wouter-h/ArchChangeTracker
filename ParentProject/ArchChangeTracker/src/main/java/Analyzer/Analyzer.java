@@ -1,15 +1,19 @@
 package Analyzer;
 
 import DataStorage.*;
-import org.apache.tinkerpop.gremlin.process.traversal.TextP;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
+import static org.apache.tinkerpop.gremlin.process.traversal.TextP.containing;
 import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.*;
 
 public class Analyzer {
@@ -29,7 +33,7 @@ public class Analyzer {
      * @return ArrayList of Vertex of which the Vertex has a class label
      */
     private static ArrayList<Vertex> retrieveAllClasses(Graph g){
-        GraphTraversal<Vertex, Vertex> gt = g.traversal().V().hasLabel("class").has("name", TextP.notContaining("$"));
+        GraphTraversal<Vertex, Vertex> gt = g.traversal().V().hasLabel("class");
         ArrayList<Vertex> vertices = new ArrayList<>();
         while(gt.hasNext()){
             vertices.add(gt.next());
@@ -188,7 +192,7 @@ public class Analyzer {
         ArrayList<Vertex> possibleSystemPackages = new ArrayList<>(packages.size());
         //GraphTraversal<Vertex, Vertex> gt1 = g.traversal().V(packages).has("Type", TextP.containing("retrieved"));
         //GraphTraversal<Vertex, Vertex> gt2 = g.traversal().V(packages).has("PackageType", TextP.containing("Retrieved"));
-        GraphTraversal<Vertex, Vertex> gt4 = g.traversal().V(packages).has("PackageType", TextP.containing("System"));
+        GraphTraversal<Vertex, Vertex> gt4 = g.traversal().V(packages).has("PackageType", containing("System"));
         //GraphTraversal<Vertex, Vertex> gt3 = g.traversal().V(packages).has("ClassType", TextP.containing("Retrieved"));
         /*while(gt1.hasNext()){
             possibleSystemPackages.add(gt1.next());
