@@ -9,7 +9,9 @@ To run just the ArchChangeTracker submodule: <br/>
 **followed by** an input file location.<br/>
 **-of**: stands for output file<br/>
 **followed by** an output file location.<br/>
-mvn exec:java -pl ArchChangeTracker -Dexec.args="-if '/home/muffin/Documents/Universiteit/master internship/tajo_arcan' -of '/home/muffin/Documents/Universiteit/master internship/csvfiles/1.csv'"
+**-name** stands for the (sub)strings that it will filter the packages on.<br/>
+**followed by** either a single string denoting the string it will filter on. OR an array of strings. E.g. "[package_path_1,package_path_2,package_path)3]". Note there are no spaces between the commas. If there were, the spaces would be treated as part of the string.<br/>
+mvn exec:java -pl ArchChangeTracker -Dexec.args="-if '/home/muffin/Documents/Universiteit/master internship/tajo_arcan' -of '/home/muffin/Documents/Universiteit/master internship/csvfiles/1.csv' -name '[test1,test2,test3]'"
 <br/>
 <br/>
 **first argument**: Commits fed to the first bash script.<br/>
@@ -30,4 +32,4 @@ mvn exec:java -pl SequentialRunner -Dexec.args="'-if' '/home/muffin/Documents/Un
 <br/>
 I produced the Jar file by navigating in the SequentialRunner directory and running "mvm clean package".<br/>
 This jar file can afterwards be executed with: <br/>
-java -jar <name-of-jar>.jar "-if" "/home/muffin/Documents/Universiteit/master internship/zookeeper/zookeeper_arcan_master" "-of" "/home/muffin/Documents/Universiteit/master internship/zookeeper/analysis/zookeeper_analysis.csv" "/home/muffin/Documents/Universiteit/master internship/zookeeper/analysis/zookeeper_analysis.csv" "/home/muffin/Documents/Universiteit/master internship/bash script/titles" "/home/muffin/Documents/Universiteit/master internship/zookeeper/analysis/zookeeper_analysis_full.csv" "---+---+---" "ZOOKEEPER-" "#" "/home/muffin/Documents/Universiteit/master internship/bash script/gapCount" "/home/muffin/Documents/Universiteit/master internship/bash script/commitDates"
+java -jar <name-of-jar>.jar "-if" "/home/muffin/Documents/Universiteit/master internship/zookeeper/zookeeper_arcan_master" "-of" "/home/muffin/Documents/Universiteit/master internship/zookeeper/analysis/zookeeper_analysis.csv" -name '[test1,test2,test3]' "/home/muffin/Documents/Universiteit/master internship/zookeeper/analysis/zookeeper_analysis.csv" "/home/muffin/Documents/Universiteit/master internship/bash script/titles" "/home/muffin/Documents/Universiteit/master internship/zookeeper/analysis/zookeeper_analysis_full.csv" "---+---+---" "ZOOKEEPER-" "#" "/home/muffin/Documents/Universiteit/master internship/bash script/gapCount" "/home/muffin/Documents/Universiteit/master internship/bash script/commitDates"
