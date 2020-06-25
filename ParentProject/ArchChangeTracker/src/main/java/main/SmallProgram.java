@@ -33,7 +33,7 @@ public class SmallProgram {
         DifferenceInfo dihStub = DifferenceAnalyzer.findDifferences(plt1, new PackageLookupTable(), clt1, new ClassLookupTable(), cdh1, new CommitDependencies());
         dihStub.setGraphName(files.get(0).getCommit());
         dihStub.setComparedGraphName("");
-        writer.addEntryWithNewline(dihStub, plt1, plt2, clt1, clt2, cdh1, 2);
+        writer.addEntryWithNewline(dihStub, plt1, plt2, clt1, clt2, cdh1, 2, argsManager.getOffset());
         int i = 1;
         do{
             g2 = GraphmlReader.getGraph(files.get(i).getFile().toPath(), argsManager.getName());
@@ -42,7 +42,7 @@ public class SmallProgram {
             DifferenceInfo dih = DifferenceAnalyzer.findDifferences(plt2, plt1, clt2, clt1, cdh2, cdh1);
             dih.setGraphName(files.get(i).getCommit());
             dih.setComparedGraphName(files.get(i - 1).getCommit());
-            writer.addEntryWithNewline(dih, plt2, plt1, clt2, clt1, cdh2, i + 2);
+            writer.addEntryWithNewline(dih, plt2, plt1, clt2, clt1, cdh2, i + 2, argsManager.getOffset());
             cdh1 = cdh2;
             plt1 = plt2;
             clt1 = clt2;

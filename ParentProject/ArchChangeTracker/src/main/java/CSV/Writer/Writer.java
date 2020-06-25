@@ -10,6 +10,8 @@ import java.util.ArrayList;
  */
 public class Writer {
 
+    public final static String[] offsetColumnNames = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+
     private FileWriter fw;
     private BufferedWriter bw;
     private PrintWriter out;
@@ -28,8 +30,8 @@ public class Writer {
         writeToFile(str + "\n");
     }
 
-    public void addEntryWithNewline(DifferenceInfo dih, PackageLookupTable plt1, PackageLookupTable plt2, ClassLookupTable clt2, ClassLookupTable clt1, CommitDependencies cd, int csvRow){
-        String entry = convertCommitToCSV(dih, plt1, plt2, clt2, clt1, cd, csvRow);
+    public void addEntryWithNewline(DifferenceInfo dih, PackageLookupTable plt1, PackageLookupTable plt2, ClassLookupTable clt2, ClassLookupTable clt1, CommitDependencies cd, int csvRow, int offset){
+        String entry = convertCommitToCSV(dih, plt1, plt2, clt2, clt1, cd, csvRow, offset);
         StringBuilder sb = new StringBuilder(entry);
         sb.append("\n");
         writeToFile(sb.toString());
@@ -39,7 +41,7 @@ public class Writer {
         out.write(str);
     }
 
-    private String convertCommitToCSV(DifferenceInfo dih, PackageLookupTable plt1, PackageLookupTable plt2, ClassLookupTable clt2, ClassLookupTable clt1, CommitDependencies cd, int csvRow){
+    private String convertCommitToCSV(DifferenceInfo dih, PackageLookupTable plt1, PackageLookupTable plt2, ClassLookupTable clt2, ClassLookupTable clt1, CommitDependencies cd, int csvRow, int offset){
         String commit = dih.getGraphName();
         String comparedToCommit = dih.getComparedGraphName();
         ArrayList<ChangedPackageI> addedPackageDependencies = dih.getAddedPackageDependencies();
@@ -128,20 +130,19 @@ public class Writer {
 
         sb.append(",");
 
-        sb.append("=J" + csvRow + "+K" + csvRow + "+L" + csvRow + "+M" + csvRow + "+N" + csvRow);
+        sb.append("=" + offsetColumnNames[8 + offset] + csvRow + "+" + offsetColumnNames[9 + offset] + csvRow + "+" + offsetColumnNames[10 + offset] + csvRow + "+" + offsetColumnNames[11 + offset] + csvRow + "+" + offsetColumnNames[12 + offset] + csvRow);
 
         sb.append(",");
 
-        sb.append("=O" + csvRow + "+P" + csvRow);
+        sb.append("=" + offsetColumnNames[13 + offset] + csvRow + "+" + offsetColumnNames[14 + offset] + csvRow);
 
         sb.append(",");
 
-        String s = String.format("=((Q%d/(R%d+R%d)))*100", csvRow, csvRow, csvRow - 1);
+        String s = String.format("=((%s%d/(%s%d+%s%d)))*100", offsetColumnNames[15 + offset] , csvRow, offsetColumnNames[16+offset], csvRow, offsetColumnNames[16+offset] , csvRow - 1);
         sb.append(s);
 
         sb.append(",");
 
-        sb.append("");
         return sb.toString();
     }
 

@@ -1,5 +1,7 @@
 package Args;
 
+import Exception.InvalidOffsetException;
+
 /** The class that manages the arguments given as input parameters to the program.
  *
  */
@@ -7,6 +9,7 @@ public class ArgsManager {
     private String inputFileLoc;
     private String outputFileLoc;
     private String[] name;
+    private int offset;
 
     /** Does some basic checks to see whether the args aren't completely wrong.
      *
@@ -31,7 +34,13 @@ public class ArgsManager {
      * @return True if the length is 4, otherwise false.
      */
     private boolean checkArgsLength(String[] args){
-        return args.length == 6;
+        return args.length == 8;
+    }
+
+    private static void checkOffset(int offset) throws InvalidOffsetException {
+        if(offset < -8 || offset > 9){
+            throw new InvalidOffsetException("Offset of" + offset + "is invalid. The current offset will cause an out of bounds later on.");
+        }
     }
 
     /** Checks whether the first token equals "-if", the third token equals "-of", the second token should not be empty
@@ -45,13 +54,21 @@ public class ArgsManager {
         if(args[0].equals("-if") &&
                 args[2].equals("-of") &&
                 args[4].equals("-name") &&
+                args[6].equals("-offset") &&
                 !args[1].isEmpty() && !args[1].isBlank() &&
                 !args[3].isEmpty() && !args[3].isBlank() &&
-                !args[5].isEmpty() && !args[5].isBlank()
+                !args[5].isEmpty() && !args[5].isBlank() &&
+                !args[7].isEmpty() && !args[7].isBlank()
         ){
             this.inputFileLoc = args[1];
             this.outputFileLoc = args[3];
             this.name = createNames(args[5]);
+            this.offset = Integer.parseInt(args[7]);
+            try {
+                checkOffset(this.offset);
+            } catch (InvalidOffsetException e) {
+                e.printStackTrace();
+            }
             return true;
         }
         return false;
@@ -92,4 +109,8 @@ public class ArgsManager {
     }
 
     public String[] getName() { return name;}
+
+    public int getOffset() {
+        return offset;
+    }
 }
