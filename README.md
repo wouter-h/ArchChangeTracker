@@ -9,8 +9,10 @@ To run just the ArchChangeTracker submodule: <br/>
 **followed by** an input file location.<br/>
 **-of**: stands for output file<br/>
 **followed by** an output file location.<br/>
-**-name** stands for the (sub)strings that it will filter the packages on.<br/>
+**-name** stands for the (sub)strings that it will filter the packages on. If the filter is too harsh, it can be (especially in early commits of a branch) that the string does not exist yet, in which case nothing will be analysed in those graphml files and the program will crash. In this case try finding the strings that are missing in those commits and add those, so something will be analysed. This often happens when a project changes names, e.g. nta to tajo, or jempbox to pdfbox.<br/>
 **followed by** either a single string denoting the string it will filter on. OR an array of strings. E.g. "[package_path_1,package_path_2,package_path)3]". Note there are no spaces between the commas. If there were, the spaces would be treated as part of the string.<br/>
+**-offset** stands for the offset used in the computation by the a2a metric later on. This has been added in case the ScriptManager later on want's to insert columns before this metric, in which case it would compute the offset over the wrong columns. This is 0 if just ArchChangeTracker is used. And 1 if the complete ScriptManager is used.<br/>
+**followed by a number** can be between -8 and 9.
 mvn exec:java -pl ArchChangeTracker -Dexec.args="-if '/home/muffin/Documents/Universiteit/master internship/tajo_arcan' -of '/home/muffin/Documents/Universiteit/master internship/csvfiles/1.csv' -name '[test1,test2,test3]'"
 <br/>
 <br/>
