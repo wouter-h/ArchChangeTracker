@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ $# -lt 4 ]
+if [ $# -ne 4 ]
   then
     echo "Usage ./masterBranchCommitFinder.sh <location of the folder where the git directory is in (does not include .git itself)> <graphml dir location> <new dir location with only master graphml files> <branch>\n"
 fi

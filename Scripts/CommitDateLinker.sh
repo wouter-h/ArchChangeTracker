@@ -1,12 +1,13 @@
 #!/bin/bash
 
-if [ $# -lt 3 ]
+if [ $# -ne 3 ]
   then
-    echo "Usage ./CommitDateLinker.sh <location of the folder where the git directory is in (does not include .git itself)> <graphml dir location>\n"
+    echo "Usage ./CommitDateLinker.sh <location of the folder where the git directory is in (does not include .git itself)> <graphml dir location> <output_file_location>\n"
 fi
 
 gitDir=$1
 graphmlDir=$2
+outputFileLoc=$3
 currentDir=$PWD
 
 result=""
@@ -33,6 +34,6 @@ $commit,$date"
 
 cd "$currentDir"
 
-touch commitDates
+touch "$outputFileLoc"
 
-printf "%s" "$result" > commitDates
+printf "%s" "$result" > "$outputFileLoc"

@@ -1,12 +1,13 @@
 #!/bin/bash
 
-if [ $# -lt 2 ]
+if [ $# -ne 3 ]
   then
-    echo "Usage ./gapFinder.sh <location of the folder where the git directory is in (does not include .git itself)> <graphml dir location>\n"
+    echo "Usage ./gapFinder.sh <location of the folder where the git directory is in (does not include .git itself)> <graphml dir location> <output_file_location> <output_file_location>\n"
 fi
 
 gitDir=$1
 graphmlDir=$2
+outputFileLoc=$3
 currentDir=$PWD
 
 result=""
@@ -37,6 +38,6 @@ $commit1,$commit2,$cnt"
 
 cd "$currentDir"
 
-touch titles
+touch "$outputFileLoc"
 
-printf "%s" "$result" > gapCount
+printf "%s" "$result" > "$outputFileLoc"

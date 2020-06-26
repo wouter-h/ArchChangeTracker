@@ -1,12 +1,13 @@
 #!/bin/bash
 
-if [ $# -lt 2 ]
+if [ $# -ne 3 ]
   then
-    echo "Usage ./tagExtractor.sh <location of the folder where the git directory is in (does not include .git itself)> <graphml dir location>\n"
+    echo "Usage ./tagExtractor.sh <location of the folder where the git directory is in (does not include .git itself)> <graphml dir location> <output_file_location>\n"
 fi
 
 gitDir=$1
 graphmlDir=$2
+outputFileLocation=$3
 currentDir=$PWD
 
 result=""
@@ -31,6 +32,6 @@ cd "$gitDir"
 
 cd "$currentDir"
 
-touch titles
+touch "$outputFileLocation"
 
-printf "%s" "$result" > titles
+printf "%s" "$result" > "$outputFileLocation"
