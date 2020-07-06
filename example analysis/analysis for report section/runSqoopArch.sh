@@ -1,0 +1,1 @@
+time java -jar ArchChangeTracker.jar "-if" "/home/muffin/Documents/Universiteit/master internship/sqoop/sqoop_arcan_trunk" "-of" "/home/muffin/Documents/Universiteit/master internship/sqoop/analysis/ArchChangeTracker3.csv" "-name" "sqoop" "-offset" 0

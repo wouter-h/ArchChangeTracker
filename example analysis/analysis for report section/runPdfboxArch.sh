@@ -1,0 +1,1 @@
+time java -jar ArchChangeTracker.jar "-if" "/home/muffin/Documents/Universiteit/master internship/pdfbox/pdfbox_arcan_trunk" "-of" "/home/muffin/Documents/Universiteit/master internship/pdfbox/analysis/ArchChangeTracker3.csv" "-name" "[pdfbox,fontbox,jempbox]" "-offset" 0

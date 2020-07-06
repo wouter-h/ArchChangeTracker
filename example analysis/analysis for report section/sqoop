@@ -1,0 +1,9 @@
+In ArchChangeTracker!
+SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+total run time in seconds: 44.274882717
+
+real	0m44,456s
+user	1m4,037s
+sys	0m1,118s

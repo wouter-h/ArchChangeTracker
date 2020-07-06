@@ -1,0 +1,1 @@
+time java -jar ArchChangeTracker.jar "-if" "/home/muffin/Documents/Universiteit/master internship/zookeeper/zookeeper_arcan_master" "-of" "/home/muffin/Documents/Universiteit/master internship/zookeeper/analysis/zookeeper_analysisv2.csv" "-name" "zookeeper" "-offset" 0

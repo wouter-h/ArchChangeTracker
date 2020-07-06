@@ -1,0 +1,1 @@
+time java -jar ArchChangeTracker.jar "-if" "/home/muffin/Documents/Universiteit/master internship/tajo/tajo_arcan_master" "-of" "/home/muffin/Documents/Universiteit/master internship/tajo/analysis/ArchChangeTracker3.csv" "-name" "[nta,tajo]" "-offset" 0
